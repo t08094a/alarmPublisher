@@ -30,7 +30,6 @@ using namespace std;
 class ConfigReader : private boost::noncopyable
 {
 private:
-    bool initialized;
     boost::property_tree::ptree pt;
     
     ConfigReader();

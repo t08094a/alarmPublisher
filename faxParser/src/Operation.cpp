@@ -26,10 +26,15 @@
 #include <boost/uuid/uuid_io.hpp>
 
 Operation::Operation()
-    : resources(), id(0), guid(boost::uuids::random_generator()()), timestampIncome(boost::posix_time::second_clock::local_time()), timestamp(timestampIncome),
+    : resources(), id(0), guid(), timestampIncome(boost::posix_time::second_clock::local_time()), timestamp(timestampIncome),
       einsatzort(), zielort(), keywords()
 {
-    // nop
+    // to prevent valgrind false positive values
+    boost::mt19937 ran;
+    ran.seed(time(NULL)); // one should likely seed in a better way
+    
+    boost::uuids::basic_random_generator<boost::mt19937> gen(&ran);
+    guid = gen();
 }
 
 Operation::Operation (const Operation& other)

@@ -24,7 +24,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-ConfigReader::ConfigReader() //: initialized(false), pt(NULL)
+ConfigReader::ConfigReader()
 {
     Initialize();
 }
@@ -38,18 +38,21 @@ void ConfigReader::Initialize()
 {
     const string filename = "smsgateway.config";
     
+    boost::filesystem::path currentPath(boost::filesystem::current_path());
+    cout << "Search config file '" << filename << "' in path '" << currentPath << "'" << endl;
+    
     string resultFilename;
     
     if ( !boost::filesystem::exists( filename ) )
     {
-        // TODO: log
-        
         // config file does not exist in current path -> try read it from /etc
         string etcFullPath = "/etc/ffw/" + filename;
         
+        cout << "The file '" << filename << "' does not exist -> try to read it from '" << etcFullPath << "'" << endl;
+        
         if ( !boost::filesystem::exists( etcFullPath ) )
         {
-            // TODO: log
+            cout << "The file '" << etcFullPath << "' does not exist -> kill" << endl;
             return;
         }
         else
@@ -68,11 +71,8 @@ void ConfigReader::Initialize()
     }
     catch(const boost::property_tree::ini_parser_error &e)
     {
-        // TODO: log
         cout << e.what() << endl;
     }
-    
-    initialized = true;
 }
 
 string ConfigReader::Get(const string& path) const
@@ -85,7 +85,6 @@ string ConfigReader::Get(const string& path) const
     }
     catch(const boost::property_tree::ini_parser_error &e)
     {
-        // TODO: log
         cout << e.what() << endl;
     }
     
@@ -97,7 +96,7 @@ string ConfigReader::GetTelephonNumbers() const
     boost::optional<const boost::property_tree::ptree&> recipientNode = pt.get_child_optional("Recipients");
     if(recipientNode.is_initialized() == false)
     {
-        // TODO: log
+        cout << "Unable to read the telephone numbers. The root node is not initialized" << endl;
         return "";
     }
     
@@ -105,6 +104,8 @@ string ConfigReader::GetTelephonNumbers() const
     size_t i = 1; // initialize with 1 to prevent multiple "- 1" statements
     
     stringstream ss;
+    
+    cout << "Found the following SMS recipients:" << endl;
     
     for(const pair<string, boost::property_tree::ptree> &kv : recipientNode.get())
     {

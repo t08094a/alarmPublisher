@@ -26,6 +26,7 @@
 
 #include "../../faxParser/include/IlsAnsbach.h"
 #include "../../faxParser/include/ILocation.h"
+#include "../../smsGateway/include/GatewayManager.h"
 
 
 using namespace std;
@@ -45,11 +46,25 @@ int main(int argc, char **argv)
     
     cout << "Analyze fax: " << faxFilename << endl;
     
+    try
+    {
     IlsAnsbach faxParser;
     IOperation* operation = faxParser.Parse(faxFilename);
     
     string msg = PrepareMessage(operation);
-    cout << msg << endl;
+        
+    delete operation;
+    
+    cout << "Send SMS with message:" << endl;
+    cout << msg << endl << endl;
+    
+    GatewayManager smsManager;
+    smsManager.SendMessage("Recipients", msg);
+    }
+    catch(exception &e)
+    {
+        cout << e.what() << endl;
+    }
     
     return 0;
 }
@@ -65,16 +80,13 @@ string PrepareMessage(IOperation* operation)
     cout << operation->ToString() << endl;
     cout << "==============================================" << endl;
     
-    // Use a facet to display time in a custom format (only hour and minutes).
-//     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
-//     facet->format("%H:%M");
-    
-    // Use a facet to display time in a custom format (only hour and minutes).
-    boost::posix_time::time_facet facet;
-    facet.format("%H:%M");
-    
     stringstream ss;
-    ss.imbue(locale(std::locale::classic(), &facet));
+    
+    // Use a facet to display time in a custom format (only hour and minutes).
+    boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+    facet->format("%H:%M");
+    
+    ss.imbue(std::locale(std::locale::classic(), facet));
     ss << operation->GetTimestamp();
     
     string alarmzeit = ss.str();
@@ -91,4 +103,6 @@ string PrepareMessage(IOperation* operation)
     result << "Priorität:  " << priority << endl;
     
     string msg = result.str();
+    
+    return msg;
 }

@@ -18,9 +18,11 @@
  */
 
 #include "ParserUtility.h"
+
 #include <algorithm>
 #include <cctype>
 #include <exception>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/newline.hpp>
@@ -54,34 +56,34 @@ boost::posix_time::ptime ParserUtility::ReadFaxTimestamp(const string& line, con
     {
         if(matchesDate)
         {
-            const std::locale format = std::locale(std::locale::classic(), new boost::posix_time::time_input_facet("%d.%m.%Y"));
+            const locale format = locale(locale::classic(), new boost::posix_time::time_input_facet("%d.%m.%Y"));
 
-            std::string content = date_matches.str();
+            string content = date_matches.str();
 
-            std::istringstream is(content);
+            istringstream is(content);
             is.imbue(format);
             is >> date;
         }
 
         if(matchesTime)
         {
-            const std::locale format = std::locale(std::locale::classic(), new boost::posix_time::time_input_facet("%H:%M"));
+            const locale format = locale(locale::classic(), new boost::posix_time::time_input_facet("%H:%M"));
 
-            std::string content = time_matches.str();
+            string content = time_matches.str();
 
-            std::istringstream is(content);
+            istringstream is(content);
             is.imbue(format);
             is >> timestamp;
         }
     }
     catch(const exception& ex)
     {
-        std::cerr << "An exception occurred: " << ex.what() << std::endl;
+        cerr << "An exception occurred: " << ex.what() << endl;
         return fallback;
     }
     catch(...)
     {
-        std::cerr << "whoops!" << std::endl;
+        cerr << "whoops!" << endl;
         return fallback;
     }
 
@@ -110,7 +112,7 @@ bool ParserUtility::StartsWithKeyword(const string &line, const vector<string> k
 
 string ParserUtility::GetMessageText(const string &line, const string &prefix)
 {
-    std::string text = line;
+    string text = line;
 
     if(prefix.empty() == false)
     {
@@ -119,9 +121,9 @@ string ParserUtility::GetMessageText(const string &line, const string &prefix)
     }
     else
     {
-        std::string::size_type colonIndex = text.find(":");
+        string::size_type colonIndex = text.find(":");
 
-        if(colonIndex != std::string::npos)
+        if(colonIndex != string::npos)
         {
             text.erase(0, colonIndex + 1);
         }
@@ -162,27 +164,31 @@ string ParserUtility::ReadZipCodeFromCity(const string& cityText)
 boost::posix_time::ptime ParserUtility::TryGetTimestampFromMessage(const string &message, const boost::posix_time::ptime &fallback)
 {
     boost::posix_time::ptime dt = fallback;
-    const std::locale format = std::locale(std::locale::classic(), new boost::posix_time::time_input_facet("%d.%m.%Y %H:%M"));
-
+    
     try
     {
-        std::istringstream is(message);
+        boost::posix_time::time_input_facet* facet = new boost::posix_time::time_input_facet("%d.%m.%Y %H:%M");
+        const locale format = std::locale(std::locale::classic(), facet);
+    
+        istringstream is(message);
         is.imbue(format);
         is >> dt;
 
-        std::cout << "Parsed \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << std::endl;
+        delete facet;
+        
+        cout << "Parsed \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << endl;
 
         return dt;
     }
     catch(exception& ex)
     {
-        std::cerr << "An exception occurred: " << ex.what() << std::endl;
+        cerr << "An exception occurred: " << ex.what() << endl;
     }
 
     return dt;
 }
 
-void ParserUtility::RemoveTrailingNewline(std::string &value)
+void ParserUtility::RemoveTrailingNewline(string &value)
 {
     if(IsStringEmptyOrWhitespace(value) == false &&
        boost::algorithm::ends_with(value, "\n"))
@@ -194,7 +200,7 @@ void ParserUtility::RemoveTrailingNewline(std::string &value)
 
 void ParserUtility::AnalyzeStreetLine(const string& line, string& street, string& streetNumber, string& appendix)
 {
-    std::string workingLine = line;
+    string workingLine = line;
 
     // initialize the output
     street = "";
@@ -312,7 +318,7 @@ void ParserUtility::AnalyzeStreetLine(const string& line, string& street, string
 bool ParserUtility::IsHighway(const string& line)
 {
     // contains line a value with "Autobahn", "Bundesstraße" or "Staatsstraße", e.g. A7, B470, ST2252
-    static std::vector<string> streetTokens = { "A\\d+", "B\\d+", "S[tT]\\d+" };
+    static vector<string> streetTokens = { "A\\d+", "B\\d+", "S[tT]\\d+" };
     boost::smatch str_matches;
 
     for(string token : streetTokens)
@@ -329,7 +335,7 @@ bool ParserUtility::IsHighway(const string& line)
     return false;
 }
 
-void ParserUtility::Trim(std::vector<string>& lines)
+void ParserUtility::Trim(vector<string>& lines)
 {
     for(string& line : lines)
     {
@@ -337,7 +343,7 @@ void ParserUtility::Trim(std::vector<string>& lines)
     }
 }
 
-bool ParserUtility::IsStringEmptyOrWhitespace(const std::string& value)
+bool ParserUtility::IsStringEmptyOrWhitespace(const string& value)
 {
     if(value.empty())
     {
@@ -345,7 +351,7 @@ bool ParserUtility::IsStringEmptyOrWhitespace(const std::string& value)
     }
 
     // if string contains only spaces
-    if(std::all_of(value.begin(), value.end(), [](char c) { return std::isspace(c, std::cin.getloc()); }))
+    if(all_of(value.begin(), value.end(), [](char c) { return isspace(c, cin.getloc()); }))
     {
         return true;
     }
