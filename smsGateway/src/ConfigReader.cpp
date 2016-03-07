@@ -46,7 +46,7 @@ void ConfigReader::Initialize()
     if ( !boost::filesystem::exists( filename ) )
     {
         // config file does not exist in current path -> try read it from /etc
-        string etcFullPath = "/etc/ffw/" + filename;
+        string etcFullPath = "/etc/alarmPublisher/" + filename;
         
         cout << "The file '" << filename << "' does not exist -> try to read it from '" << etcFullPath << "'" << endl;
         
