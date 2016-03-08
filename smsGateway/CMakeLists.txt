@@ -93,4 +93,4 @@ add_custom_target(SMSTRADE_GSOAP_TARGET DEPENDS ${CMAKE_BINARY_DIR}/generated/Sm
 #Make sure that the soap client is compiled only after gsoap has been processed
 add_dependencies(${PROJECT_NAME} SMSTRADE_GSOAP_TARGET)
 
-target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoap++) # ${GSOAP_LIBRARIES} 
+target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoapssl++)
