@@ -100,14 +100,21 @@ void SmsTradeGateway::InitializeProxy(SmstradeBindingProxy& server)
     server.soap->connect_timeout = 10; // connect within 10 s
     server.soap->send_timeout = 5;     // send timeout is 5s
     server.soap->recv_timeout = 5;     // receive timeout is 5s
-    soap
-    soap_ssl_init();
     
-    int result = soap_ssl_client_context(&(*server.soap), SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL); // SOAP_SSL_DEFAULT besser: SOAP_SSL_CLIENT
+    soap soap_ssl_init();
+    
+    soap* serverSoap = &(*server.soap);
+    
+    if(serverSoap == nullptr)
+    {
+        soap_stream_fault(serverSoap, std::cerr);
+    }
+    
+    int result = soap_ssl_client_context(serverSoap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL); // SOAP_SSL_DEFAULT besser: SOAP_SSL_CLIENT
     
     if(result)
     {
-        soap_stream_fault(&(*server.soap), std::cerr);
+        soap_stream_fault(serverSoap, std::cerr);
     }
 }
 
