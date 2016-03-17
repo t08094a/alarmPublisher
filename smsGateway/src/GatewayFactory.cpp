@@ -60,6 +60,10 @@ shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
         {
             gw = new SmsTradeGateway();
         }
+        else if (name == ProwlGateway::GetGatewayName())
+        {
+            gw = new ProwlGateway();
+        }
     }
     else
     {

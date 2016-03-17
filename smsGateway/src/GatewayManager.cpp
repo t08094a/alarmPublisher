@@ -22,6 +22,7 @@
 #include "GatewayFactory.h"
 #include "ConfigReader.h"
 
+#include <iostream>
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -43,7 +44,7 @@ const set<string> GatewayManager::GetPossibleGatewayNames() const
     return GatewayFactory::GetInstance().GetAvailableGatewayNames();
 }
     
-void GatewayManager::SendMessage(string distributionList, string msg)
+void GatewayManager::SendMessage(const string&  distributionList, const string&  msg)
 {
     vector<string> gateways;
     string gatewayConfig = ConfigReader::GetInstance().Get("GatewaySelector.Active");
@@ -63,10 +64,19 @@ void GatewayManager::SendMessage(string distributionList, string msg)
     }
 }
 
-void GatewayManager::SendMessage(string gateway, string distributionList, string msg)
+void GatewayManager::SendMessage(const string&  gateway, const string&  distributionList, const string&  msg)
 {
     // TODO: get telephone numbers based on distributionList. this defines the section in the config
     string telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers();
     
-    GatewayFactory::GetInstance().GetGateway(gateway).get()->SendMessage(telephoneNumbers, msg);
+    ISmsGateway* foundGateway = GatewayFactory::GetInstance().GetGateway(gateway).get();
+    
+    if(foundGateway != nullptr)
+    {
+        foundGateway->SendMessage(telephoneNumbers, msg);
+    }
+    else
+    {
+        cerr << "The gateway '" << gateway << "' was not found!" << endl;
+    }
 }
