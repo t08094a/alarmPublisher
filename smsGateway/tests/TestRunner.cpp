@@ -37,6 +37,13 @@ struct MyConfig
         settings << "Route = direct" << endl;
         settings << "From = FF Alarm" << endl;
         settings << endl;
+        settings << "[Prowl]" << endl;
+        settings << "ApiKey = 9VUtGMBbe151aaf4E38BNnp" << endl;
+        settings << "Url = https://prowl.weks.net/publicapi/add" << endl;
+        settings << "Application = FF Alarm" << endl;
+        settings << "Event = Alarm" << endl;
+        settings << "Priority = 2" << endl;
+        settings << endl;
         settings << "[Recipients]" << endl;
         settings << "Nachname1_Vorname1 = 1111" << endl;
         settings << "Nachname2_Vorname2 = 2222" << endl;

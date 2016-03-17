@@ -21,10 +21,12 @@
 #include <exception>
 #include "GatewayFactory.h"
 #include "SmsTradeGateway.h"
+#include "ProwlGateway.h"
 
 GatewayFactory::GatewayFactory()
 {
     availableGatewayNames.insert(SmsTradeGateway::GetGatewayName());
+    availableGatewayNames.insert(ProwlGateway::GetGatewayName());
 }
 
 GatewayFactory::GatewayFactory(const GatewayFactory&)

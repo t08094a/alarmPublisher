@@ -66,6 +66,10 @@ add_executable(${PROJECT_NAME}_SmsTradeGateway TestRunner.cpp SmsTradeGatewayTes
 target_link_libraries(${PROJECT_NAME}_SmsTradeGateway PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES}) # ${GSOAP_LIBRARIES} 
 add_test(NAME SmsTradeGateway COMMAND ${PROJECT_NAME}_SmsTradeGateway)
 
+add_executable(${PROJECT_NAME}_ProwlGateway TestRunner.cpp ProwlGatewayTest.cpp ${SMSTRADE_SRC_FILES}) 
+target_link_libraries(${PROJECT_NAME}_ProwlGateway PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES}) # ${GSOAP_LIBRARIES} 
+add_test(NAME ProwlGateway COMMAND ${PROJECT_NAME}_ProwlGateway)
+
 add_executable(${PROJECT_NAME}_ConfigReader TestRunner.cpp ConfigReaderTest.cpp ${SMSTRADE_SRC_FILES}) 
 target_link_libraries(${PROJECT_NAME}_ConfigReader PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES}) # ${GSOAP_LIBRARIES} 
 add_test(NAME ConfigReader COMMAND ${PROJECT_NAME}_ConfigReader)

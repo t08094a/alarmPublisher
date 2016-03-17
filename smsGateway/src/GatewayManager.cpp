@@ -22,6 +22,10 @@
 #include "GatewayFactory.h"
 #include "ConfigReader.h"
 
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
+
 using namespace std;
 
 GatewayManager::GatewayManager()
@@ -41,10 +45,22 @@ const set<string> GatewayManager::GetPossibleGatewayNames() const
     
 void GatewayManager::SendMessage(string distributionList, string msg)
 {
-    string gateway = ConfigReader::GetInstance().Get("GatewaySelector.Active");
+    vector<string> gateways;
+    string gatewayConfig = ConfigReader::GetInstance().Get("GatewaySelector.Active");
     
+    if(gatewayConfig.find(";"))
+    {
+        boost::algorithm::split(gateways, gatewayConfig, boost::is_any_of(",;"), boost::algorithm::token_compress_on);                
+    }
+    else
+    {
+        gateways.push_back(gatewayConfig);
+    }
     
-    SendMessage(gateway, distributionList, msg);
+    for(string const& gw : gateways)
+    {
+        SendMessage(gw, distributionList, msg);
+    }
 }
 
 void GatewayManager::SendMessage(string gateway, string distributionList, string msg)

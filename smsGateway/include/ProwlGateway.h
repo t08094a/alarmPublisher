@@ -31,11 +31,13 @@ class ProwlGateway : public ISmsGateway
 {
 private:
     static const string name;
-    string hostname;
-    string port;
     string apiKey;
+    string url;
+    string application;
+    string event;
+    string priority;
     void InitializeFromConfig();
-    void BuildNotificationRequestUrl(string msg, bool debug);
+    const string BuildNotificationRequestUrl(const string& msg, bool debug);
     
 public:
     ProwlGateway();

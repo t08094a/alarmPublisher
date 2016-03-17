@@ -19,6 +19,20 @@ Name=GCC
 Path=gcc
 Type=GCC
 
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=debug
+Configured Launchers=gdb
+Name=smsGateway_test_ProwlGateway
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_ProwlGateway
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
+isExecutable=false
+
 [Project]
 VersionControlSupport=kdevgit
 

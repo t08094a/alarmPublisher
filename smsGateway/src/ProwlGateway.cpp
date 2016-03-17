@@ -20,12 +20,15 @@
 
 #include "../include/ProwlGateway.h"
 #include "ConfigReader.h"
+#include "UrlEncoding.h"
 
+#include <iostream>
+#include <sstream>
 #include <curl/curl.h>
 
 const string ProwlGateway::name = "Prowl";
 
-ProwlGateway::ProwlGateway() : hostname(), port(), apiKey()
+ProwlGateway::ProwlGateway() : apiKey(), url(), application(), event(), priority()
 {
     InitializeFromConfig();
 }
@@ -55,41 +58,40 @@ void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
     
     if(curl) 
     {
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.prowlapp.com/publicapi/add?apikey=9VUtGMBbe151aaf4E38BNnp&application=FF%20Alarm&event=Alarm&description=Hello%20World&priority=2");
+        const string notificationUrl = BuildNotificationRequestUrl(msg, debug);
+        
+        curl_easy_setopt(curl, CURLOPT_URL, notificationUrl.c_str());
 
-        /*
-        * If you want to connect to a site who isn't using a certificate that is
-        * signed by one of the certs in the CA bundle you have, you can skip the
-        * verification of the server's certificate. This makes the connection
-        * A LOT LESS SECURE.
-        *
-        * If you have a CA cert for the server stored someplace else than in the
-        * default bundle, then the CURLOPT_CAPATH option might come handy for
-        * you.
-        */ 
+        // If you want to connect to a site who isn't using a certificate that is
+        // signed by one of the certs in the CA bundle you have, you can skip the
+        // verification of the server's certificate. This makes the connection
+        // A LOT LESS SECURE.
+        // 
+        // If you have a CA cert for the server stored someplace else than in the
+        // default bundle, then the CURLOPT_CAPATH option might come handy for
+        // you.
+
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         
-        /*
-        * If the site you're connecting to uses a different host name that what
-        * they have mentioned in their server certificate's commonName (or
-        * subjectAltName) fields, libcurl will refuse to connect. You can skip
-        * this check, but this will make the connection less secure.
-        */ 
+        // If the site you're connecting to uses a different host name that what
+        // they have mentioned in their server certificate's commonName (or
+        // subjectAltName) fields, libcurl will refuse to connect. You can skip
+        // this check, but this will make the connection less secure.
         //curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
         
         curl_easy_setopt(curl, CURLOPT_HEADER, 0);
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);
         
-        /* Perform the request, res will get the return code */
+        // Perform the request, res will get the return code
         CURLcode res = curl_easy_perform(curl);
         
-        /* Check for errors */
+        // Check for errors
         if(res != CURLE_OK)
         {
             cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
         }
 
-        /* always cleanup */
+        // always cleanup
         curl_easy_cleanup(curl);
     }
 
@@ -98,30 +100,40 @@ void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
 
 void ProwlGateway::InitializeFromConfig()
 {
-    /*
-    ==========
-    config.ini
-    ==========
-    [Prowl]
-    ApiKey = 9VUtGMBbe151aaf4E38BNnp
-    */
-    string priority = "[PRI2]";
-    hostname = "prowl.weks.net";
-    port = "443";
-    string messageSize = "11400";
-    string buffersize = "512";
+    // ==========
+    // config.ini
+    // ==========
+    // [Prowl]
+    // ApiKey = xxx
+    // Url = https://prowl.weks.net/publicapi/add
+    // Application = FF Alarm
+    // Event = Alarm
+    // Priority = 2
     
-    apiKey = priority + "9VUtGMBbe151aaf4E38BNnp";
-    //apiKey = ConfigReader::GetInstance().Get("Prowl.ApiKey");
+    apiKey = ConfigReader::GetInstance().Get("Prowl.ApiKey");
+    url = ConfigReader::GetInstance().Get("Prowl.Url");
+    application = ConfigReader::GetInstance().Get("Prowl.Application");
+    event = ConfigReader::GetInstance().Get("Prowl.Event");
+    priority = ConfigReader::GetInstance().Get("Prowl.Priority");
 }
 
-void ProwlGateway::BuildNotificationRequestUrl(string msg, bool debug)
+const string ProwlGateway::BuildNotificationRequestUrl(const string& msg, bool debug)
 {
-    string protocol = "https";
-    string url = "https://api.prowlapp.com/publicapi/add";
-    string application = "FF%20Alarm";
-    string event = "Alarm";
-    string priority = 2;
+    // url encode inputs
+    string applicationEncoded = UrlEncoding::Encode(application);
+    string eventEncoded = UrlEncoding::Encode(event);
+    string msgEncoded = UrlEncoding::Encode(msg);
     
-    string s = protocol + "://" + url + "?apikey=" + apiKey + "&application=" + application + "&priority=" + priority + "&event=" + event + "&description=" + msg;
+    const string appendChar = "&";
+    
+    stringstream ss;
+    ss << url << "?";
+    ss << "apikey=" << apiKey << appendChar;
+    ss << "application=" << applicationEncoded << appendChar;
+    ss << "priority=" << priority << appendChar;
+    ss << "event=" << eventEncoded << appendChar;
+    ss << "description=" << msgEncoded;
+    
+    string s = ss.str();
+    return s;
 }
