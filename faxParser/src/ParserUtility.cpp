@@ -167,15 +167,13 @@ boost::posix_time::ptime ParserUtility::TryGetTimestampFromMessage(const string 
     
     try
     {
-        boost::posix_time::time_input_facet* facet = new boost::posix_time::time_input_facet("%d.%m.%Y %H:%M");
+        boost::posix_time::time_input_facet *facet = new boost::posix_time::time_input_facet("%d.%m.%Y %H:%M");
         const locale format = std::locale(std::locale::classic(), facet);
     
         istringstream is(message);
         is.imbue(format);
         is >> dt;
 
-        delete facet;
-        
         cout << "Parsed \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << endl;
 
         return dt;
@@ -341,6 +339,11 @@ void ParserUtility::Trim(vector<string>& lines)
     {
         boost::algorithm::trim(line);
     }
+}
+
+void ParserUtility::EraseEmptyItems(vector<string>& lines)
+{
+    lines.erase(std::remove_if(lines.begin(), lines.end(), [](const string& s) { return s.empty(); }), lines.end());
 }
 
 bool ParserUtility::IsStringEmptyOrWhitespace(const string& value)

@@ -11,12 +11,15 @@
 #include "../include/IlsAnsbach.h"
 #include "../include/IOperation.h"
 
+using namespace std;
 using namespace boost::unit_test;
 
 // forward declarations
-static const std::string GetFaxContent1();
-static const std::string CreateTemporaryFile(std::function<std::string()> getContent);
+static const string GetFaxContent1();
+static const string GetFaxContent2();
+static const string CreateTemporaryFile(function<string()> getContent);
 
+/*
 BOOST_AUTO_TEST_CASE( ParseFileWithEmptyFilename )
 {
     IlsAnsbach* parser = new IlsAnsbach();
@@ -39,7 +42,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithNotExistingFile )
 
 BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
 {
-    const std::string filename = CreateTemporaryFile(GetFaxContent1);
+    const string filename = CreateTemporaryFile(GetFaxContent1);
     
     IlsAnsbach parser;
     IOperation* result = parser.Parse(filename);
@@ -53,7 +56,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
         boost::filesystem::remove(filename);
     }
     
-    std::cout << *result << std::endl;
+    cout << *result << endl;
     
     boost::posix_time::ptime expectedTimestamp(boost::gregorian::date(2015, boost::gregorian::Aug, 29), boost::posix_time::time_duration(14, 35, 0));
     boost::posix_time::ptime lowestTimestampIncome(boost::posix_time::second_clock::local_time() - boost::posix_time::seconds(1));
@@ -114,11 +117,29 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     
     delete result;
 }
-
-
-static const std::string GetFaxContent1()
+*/
+BOOST_AUTO_TEST_CASE( ParseFileWithMultipleEinsatzmittel )
 {
-    std::string a = " \n"
+    const string filename = CreateTemporaryFile(GetFaxContent2);
+    
+    IlsAnsbach parser;
+    IOperation* result = parser.Parse(filename);
+    
+    ILocation& einsatzort = result->GetEinsatzort();
+    ILocation& zielort = result->GetZielort();
+    IKeywords& keywords = result->GetKeywords();
+    
+    if(boost::filesystem::exists(filename))
+    {
+        boost::filesystem::remove(filename);
+    }
+    
+    cout << *result << endl;
+}
+
+static const string GetFaxContent1()
+{
+    string a = " \n"
 "\n"
 "EM n.s ensbac Booms (esii asoso-no ämo(eszuaiwwes ein e es.os.eois äci4=as E\n"
 "---------------------- -- Alarmfax der ILS Ansbach ------------------------\n"
@@ -183,7 +204,81 @@ static const std::string GetFaxContent1()
     return a;
 }
 
-static const std::string CreateTemporaryFile(std::function<std::string()> getContent)
+static const string GetFaxContent2()
+{
+    string a = " \n"
+"\n"
+"EM n.s ensbac Booms (esii asoso-no ämo(eszuaiwwes ein e es.os.eois äci4=s7 E\n"
+"---------------------- -- Alarmfax der ILS Ansbach ------------------------\n"
+"\n"
+"Absender : ILS ANSBACH\n"
+"Fax : +49 (981) 65050-410 Rufnummer: +49 (981) 9776240\n"
+"Termin .\n"
+"\n"
+"Einsatznummer: T 5.1 160308  275\n"
+"\n"
+"---------------------------- -- EINSATZORT ------------------------------\n"
+"Straße : Mailheim    Haus-Nr.: \n"
+"\n"
+"Ort : 91472 Mailheim - Ipsheim Ipsheim\n"
+"\n"
+"Objekt : \n"
+"\n"
+"Plannummer:\n"
+"\n"
+"Station\n"
+"\n"
+"---------------------------- -- ZIELORT ---------------------------------\n"
+"Straße : Haus-Nr.:\n"
+"\n"
+"Ort :\n"
+"\n"
+"Objekt\n"
+"\n"
+"Station\n"
+"\n"
+"---------------------------- -- EINSATZGRUND ----------------------------\n"
+"\n"
+"Schlagw.: VU mit PKW (bei Austritt von Betriebsstoffen) !!!\n"
+"Stichwort B:\n"
+"\n"
+"Stichwort R:\n"
+"\n"
+"Stichwort S:\n"
+"\n"
+"Stichwort T: VU 1\n"
+"\n"
+"Prio. : 1\n"
+"\n"
+"(1 = Notfall / 2 = dringend / 3 = nicht zeitkritisch)\n"
+"---------------------------- -- EINSATZMITTEL ----------------------------\n"
+"Einsatzmittel : 5.1.3 NEA FF Ipsheim\n"
+"Alarmiert : 08.03.2016 07:24\n"
+"Geforderte Ausstattung : \n"
+"Einsatzmittel : 5.1.3 FL IPS 42/1\n"
+"Alarmiert : 08.03.2016 07:24\n"
+"Geforderte Ausstattung : Gruppe (Takt. Einheit, Dispo)\n"
+"Einsatzmittel : 5.1.3 Infoalarm FW-Führung NEA\n"
+"Alarmiert : 08.03.2016 07:24\n"
+"Geforderte Ausstattung : \n"
+"\n"
+"---------------------------- -- BEMERKUNG -------------------------------\n"
+"\n"
+"3 PKW\n"
+"\n"
+"---------------------------- -- ENDE FAX -------------------------------\n"
+"\n"
+"Zur Übernahme eines Einsatzes Kontakt mit der ILS aufnehmen!\n"
+"\n"
+"Das Alarmfax darf nur zum internen Dienstgebrauch verwendet werden.\n"
+"Der Empfänger hat sicherzustellen, dass unbefugte bzw. nicht beteiligte\n"
+"Dritte keinen Zugang zu den übermittelten Daten haben - ILS Ansbach -\n"
+"\n";
+
+    return a;
+}
+
+static const string CreateTemporaryFile(function<string()> getContent)
 {
     boost::filesystem::path tmpFilenamePath = boost::filesystem::unique_path();
     tmpFilenamePath.replace_extension("txt");
@@ -191,10 +286,10 @@ static const std::string CreateTemporaryFile(std::function<std::string()> getCon
     boost::filesystem::path tmpDirPath = boost::filesystem::temp_directory_path();
     boost::filesystem::path absoluteFilenamePath = tmpDirPath / tmpFilenamePath;
      
-    const std::string tmpFilename = absoluteFilenamePath.native();
+    const string tmpFilename = absoluteFilenamePath.native();
     
-    std::ofstream file;
-    file.open(tmpFilename, std::ios::out | std::ios::trunc | std::ios::binary);
+    ofstream file;
+    file.open(tmpFilename, ios::out | ios::trunc | ios::binary);
     file << getContent();
     file.close();
     
