@@ -19,7 +19,6 @@ static const string GetFaxContent1();
 static const string GetFaxContent2();
 static const string CreateTemporaryFile(function<string()> getContent);
 
-/*
 BOOST_AUTO_TEST_CASE( ParseFileWithEmptyFilename )
 {
     IlsAnsbach* parser = new IlsAnsbach();
@@ -83,7 +82,6 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     BOOST_CHECK("" == result->GetEinsatzortStation());
     BOOST_CHECK("FW" == result->GetEinsatzortZusatz());
     BOOST_CHECK(0 == result->GetId());
-        
     BOOST_CHECK("Technische Hilfe klein !!!" == keywords.GetKeyword());
     BOOST_CHECK("" == keywords.GetEmergencyKeyword());
     BOOST_CHECK("" == keywords.GetB());
@@ -94,9 +92,13 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     BOOST_CHECK("" == result->GetMessenger());
     BOOST_CHECK("T 5.1 150829 1383" == result->GetOperationNumber());
     BOOST_CHECK("1" == result->GetPriority());
-    BOOST_CHECK(0 == result->GetResources().size());
+    
+    BOOST_CHECK(1 == result->GetResources().size());
+    BOOST_CHECK("5.1.3 NEA FF Ipsheim" == result->GetResources().front()->GetFullName());
+    BOOST_CHECK(expectedTimestamp == result->GetResources().front()->GetTimestamp());
+    BOOST_CHECK(0 == result->GetResources().front()->GetRequestedEquipment().size());
+    
     BOOST_CHECK("." == result->GetTermin());
-    BOOST_CHECK(expectedTimestamp == result->GetTimestamp());
     BOOST_CHECK(lowestTimestampIncome <= result->GetTimestampIncome());
     BOOST_CHECK(highestTimestampIncome >= result->GetTimestampIncome());
     
@@ -117,7 +119,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     
     delete result;
 }
-*/
+
 BOOST_AUTO_TEST_CASE( ParseFileWithMultipleEinsatzmittel )
 {
     const string filename = CreateTemporaryFile(GetFaxContent2);
@@ -135,13 +137,80 @@ BOOST_AUTO_TEST_CASE( ParseFileWithMultipleEinsatzmittel )
     }
     
     cout << *result << endl;
+    
+    boost::posix_time::ptime expectedResourcesTimestamp(boost::gregorian::date(2016, boost::gregorian::Mar, 8), boost::posix_time::time_duration(7, 24, 0));
+    boost::posix_time::ptime lowestTimestampIncome(boost::posix_time::second_clock::local_time() - boost::posix_time::seconds(1));
+    boost::posix_time::ptime highestTimestampIncome(boost::posix_time::second_clock::local_time() + boost::posix_time::seconds(1));
+        
+    BOOST_CHECK(result != nullptr);
+    BOOST_CHECK("ILS ANSBACH" == result->GetAbsender());
+    BOOST_CHECK("3 PKW" == result->GetComment());
+    
+    BOOST_CHECK("Mailheim" == einsatzort.GetCity());
+    BOOST_CHECK("" == einsatzort.GetGeoLatitude());
+    BOOST_CHECK("" == einsatzort.GetGeoLongitude());
+    BOOST_CHECK("" == einsatzort.GetIntersection());
+    BOOST_CHECK("" == einsatzort.GetLocation());
+    BOOST_CHECK("" == einsatzort.GetProperty());
+    BOOST_CHECK("Mailheim" == einsatzort.GetStreet());
+    BOOST_CHECK("1" == einsatzort.GetStreetNumber());
+    BOOST_CHECK("91472" == einsatzort.GetZipCode());
+    BOOST_CHECK(false == einsatzort.HasGeoCoordinates());
+    BOOST_CHECK(true == einsatzort.IsMeaningful());
+    
+    BOOST_CHECK("" == result->GetEinsatzortPlannummer());
+    BOOST_CHECK("" == result->GetEinsatzortStation());
+    BOOST_CHECK("" == result->GetEinsatzortZusatz());
+    BOOST_CHECK(0 == result->GetId());
+    BOOST_CHECK("VU mit PKW (bei Austritt von Betriebsstoffen) !!!" == keywords.GetKeyword());
+    BOOST_CHECK("" == keywords.GetEmergencyKeyword());
+    BOOST_CHECK("" == keywords.GetB());
+    BOOST_CHECK("" == keywords.GetR());
+    BOOST_CHECK("" == keywords.GetS());
+    BOOST_CHECK("VU 1" == keywords.GetT());
+    
+    BOOST_CHECK("" == result->GetMessenger());
+    BOOST_CHECK("T 5.1 160308  275" == result->GetOperationNumber());
+    BOOST_CHECK("1" == result->GetPriority());
+    
+    BOOST_CHECK(3 == result->GetResources().size());
+    BOOST_CHECK("5.1.3 NEA FF Ipsheim" == result->GetResources().at(0)->GetFullName());
+    BOOST_CHECK(expectedResourcesTimestamp == result->GetResources().at(0)->GetTimestamp());
+    BOOST_CHECK(0 == result->GetResources().at(0)->GetRequestedEquipment().size());
+    
+    BOOST_CHECK("5.1.3 FL IPS 42/1" == result->GetResources().at(1)->GetFullName());
+    BOOST_CHECK(expectedResourcesTimestamp == result->GetResources().at(1)->GetTimestamp());
+    BOOST_CHECK("Gruppe (Takt. Einheit, Dispo)" == result->GetResources().at(1)->GetRequestedEquipment().front());
+    
+    BOOST_CHECK("5.1.3 Infoalarm FW-Führung NEA" == result->GetResources().at(2)->GetFullName());
+    BOOST_CHECK(expectedResourcesTimestamp == result->GetResources().at(2)->GetTimestamp());
+    BOOST_CHECK(0 == result->GetResources().at(2)->GetRequestedEquipment().size());
+    
+    BOOST_CHECK("." == result->GetTermin());
+    BOOST_CHECK(lowestTimestampIncome <= result->GetTimestampIncome());
+    BOOST_CHECK(highestTimestampIncome >= result->GetTimestampIncome());
+    
+    BOOST_CHECK("" == zielort.GetCity());
+    BOOST_CHECK("" == zielort.GetGeoLatitude());
+    BOOST_CHECK("" == zielort.GetGeoLongitude());
+    BOOST_CHECK("" == zielort.GetIntersection());
+    BOOST_CHECK("" == zielort.GetLocation());
+    BOOST_CHECK("" == zielort.GetProperty());
+    BOOST_CHECK("" == zielort.GetStreet());
+    BOOST_CHECK("1" == zielort.GetStreetNumber()); // ??? sollte eigentlich leer sein
+    BOOST_CHECK("" == zielort.GetZipCode());
+    BOOST_CHECK(false == zielort.HasGeoCoordinates());
+    BOOST_CHECK(false == zielort.IsMeaningful());
+    
+    BOOST_CHECK("" == result->GetZielortStation());
+    BOOST_CHECK("" == result->GetZielortZusatz());
 }
 
 static const string GetFaxContent1()
 {
     string a = " \n"
 "\n"
-"EM n.s ensbac Booms (esii asoso-no ämo(eszuaiwwes ein e es.os.eois äci4=as E\n"
+"ILS Ansbac      +49 (981) 65050-410      0(9846)979725      1/1      29.08.2015      14:35\n"
 "---------------------- -- Alarmfax der ILS Ansbach ------------------------\n"
 "\n"
 "Absender : ILS ANSBACH\n"

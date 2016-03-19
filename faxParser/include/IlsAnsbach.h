@@ -38,7 +38,7 @@ private:
     vector<string> definedKeywords = {"ABSENDER", "FAX", "TERMIN", "EINSATZNUMMER", "NAME", "STRAßE", "ORT", "OBJEKT", "PLANNUMMER",
                                       "STATION", "STRAßE", "ORT", "OBJEKT", "STATION", "SCHLAGW", "STICHWORT", "PRIO",
                                       "EINSATZMITTEL", "ALARMIERT", "GEFORDERTE AUSSTATTUNG"};
-    vector<string> sectionNames = {"MITTEILER","EINSATZORT","ZIELORT","EINSATZGRUND", "EINSATZMITTEL", "BEMERKUNG"}; // , "ENDE FAX"
+    vector<string> sectionNames = {"MITTEILER","EINSATZORT","ZIELORT","EINSATZGRUND", "EINSATZMITTEL", "BEMERKUNG", "ENDE FAX"};
     map<string, CurrentSection> sectionResolver = { 
             {"MITTEILER", CurrentSection::BMitteiler },
             {"EINSATZORT", CurrentSection::CEinsatzort },
@@ -46,7 +46,7 @@ private:
             {"EINSATZGRUND", CurrentSection::EEinsatzgrund },
             {"EINSATZMITTEL", CurrentSection::FEinsatzmittel },
             {"BEMERKUNG", CurrentSection::GBemerkung },
-            //{"ENDE FAX", CurrentSection::HFooter },
+            {"ENDE FAX", CurrentSection::HFooter }
         };
         
     typedef void (IlsAnsbach::*WorkerFunction)(vector<string>& lines, Operation* operation);
@@ -59,13 +59,11 @@ public:
     
     IOperation* Parse(const string& filename);
     IOperation* Parse(vector<string>& lines);
-    IOperation* Parse2(vector<string>& lines);
     
     IlsAnsbach& operator= ( const IlsAnsbach& other );
     bool operator== ( const IlsAnsbach& other ) const;
     
 private:
-    bool GetSection(const string& line, CurrentSection& section, bool& keywordsOnly);
     CurrentSection GetSection(const string& line);
     bool IsSectionBegin(const string& line);
     void ParseLineWithKeyword(string line, string& prefix, string& value);

@@ -74,6 +74,8 @@ boost::posix_time::ptime ParserUtility::ReadFaxTimestamp(const string& line, con
             istringstream is(content);
             is.imbue(format);
             is >> timestamp;
+            
+            cout << "Parsed timestamp from fax header \"" << line << "\" to \"" << timestamp << "\" (Fallback: " << fallback << ")" << endl;
         }
     }
     catch(const exception& ex)
@@ -174,7 +176,7 @@ boost::posix_time::ptime ParserUtility::TryGetTimestampFromMessage(const string 
         is.imbue(format);
         is >> dt;
 
-        cout << "Parsed \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << endl;
+        cout << "Parsed timestamp from message \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << endl;
 
         return dt;
     }
