@@ -47,7 +47,19 @@ public:
     
         for( unsigned char c : str )
         {
-            if( unreserved.find(c) != std::string::npos ) 
+            if(c == '\r')
+            {
+                result += "%0D";
+            }
+            else if(c == '\n')
+            {
+                result += "%0A";
+            }
+            else if(c == '\t')
+            {
+                result += "%20%20%20%20";
+            }
+            else if( unreserved.find(c) != string::npos ) 
             {
                 result += c;
             }
@@ -56,7 +68,7 @@ public:
                 result += ConvertToHex(c);
             }
         }
-    
+        
         return result;
     }
 };

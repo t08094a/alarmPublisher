@@ -84,7 +84,7 @@ void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& to
     struct ns1__sendSMSResponse returnData;
         
     // returns error code or SOAP_OK
-    int result = server.sendSMS(key, to, "äöüß" + msg, route, from, returnData); // $returnval Array mit Daten: 0 => Returncode, 1 => MessageID, 2 => entstandene Kosten, 3 => Anzahl der SMS, 4 => Zeitpunkt des Versandes
+    int result = server.sendSMS(key, to, msg, route, from, returnData); // $returnval Array mit Daten: 0 => Returncode, 1 => MessageID, 2 => entstandene Kosten, 3 => Anzahl der SMS, 4 => Zeitpunkt des Versandes
     if(result != SOAP_OK)
     {
         server.soap_stream_fault(std::cerr);

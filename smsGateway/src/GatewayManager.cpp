@@ -64,8 +64,10 @@ void GatewayManager::SendMessage(const string&  distributionList, const string& 
     }
 }
 
-void GatewayManager::SendMessage(const string&  gateway, const string&  distributionList, const string&  msg)
+void GatewayManager::SendMessage(const string& gateway, const string&  distributionList, const string&  msg)
 {
+    cout << "Calling gateway \"" << gateway << "\"" << endl;
+    
     // TODO: get telephone numbers based on distributionList. this defines the section in the config
     string telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers();
     

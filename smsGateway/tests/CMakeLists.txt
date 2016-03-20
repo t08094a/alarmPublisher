@@ -78,6 +78,6 @@ add_executable(${PROJECT_NAME}_GatewayManager TestRunner.cpp GatewayManagerTest.
 target_link_libraries(${PROJECT_NAME}_GatewayManager PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoapssl++)
 add_test(NAME GatewayManager COMMAND ${PROJECT_NAME}_GatewayManager)
 
-# add_executable(${PROJECT_NAME}_UrlEncoder TestRunner.cpp UrlEncoderTest.cpp ${SMSTRADE_SRC_FILES}) 
-# target_link_libraries(${PROJECT_NAME}_UrlEncoder PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoapssl++)
-# add_test(NAME UrlEncoder COMMAND ${PROJECT_NAME}_UrlEncoder)
+add_executable(${PROJECT_NAME}_UrlEncoder TestRunner.cpp UrlEncoderTest.cpp) 
+target_link_libraries(${PROJECT_NAME}_UrlEncoder PRIVATE smsGateway ${Boost_LIBRARIES})
+add_test(NAME UrlEncoder COMMAND ${PROJECT_NAME}_UrlEncoder)
