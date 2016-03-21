@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2015  Jochen Fähnlein <jochen.faehnlein@ff-ipsheim.de>
+ * Copyright (C) 2016  Jochen Fähnlein <jochen.faehnlein@ff-ipsheim.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,35 @@
  *
  */
 
-#ifndef GATEWAYMANAGER_H
-#define GATEWAYMANAGER_H
+#ifndef PROWLGATEWAY_H
+#define PROWLGATEWAY_H
 
-#include <string>
-#include <set>
+#include <map>
 #include "ISmsGateway.h"
+
 
 using namespace std;
 
-class GatewayManager
+class ProwlGateway : public ISmsGateway
 {
+private:
+    static const string name;
+    string apiKey;
+    string url;
+    string application;
+    string event;
+    string priority;
+    void InitializeFromConfig();
+    const string BuildNotificationRequestUrl(const string& msg, bool debug);
+    
 public:
-    GatewayManager();
-    ~GatewayManager();
+    ProwlGateway();
+    ~ProwlGateway();
     
-    const set<string> GetPossibleGatewayNames() const;
+    static const string GetGatewayName();
+    string GetName() const;
     
-    void SendMessage( const string& distributionList, const string& msg);
-    void SendMessage( const string& gateway, const string& distributionList, const string& msg );
+    void SendMessage( const string& to, const string& msg, bool debug = false );
 };
 
-#endif // GATEWAYMANAGER_H
+#endif // PROWLGATEWAY_H

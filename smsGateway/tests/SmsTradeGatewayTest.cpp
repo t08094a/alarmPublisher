@@ -40,9 +40,6 @@ BOOST_AUTO_TEST_CASE( SendMessage )
     */
 }
 
-
-// ###################
-
 BOOST_AUTO_TEST_CASE( GetNameReturnsSmstradeUrl )
 {
     string expected = "SmsTradeUrl";

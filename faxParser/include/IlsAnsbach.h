@@ -20,33 +20,61 @@
 #ifndef ILSANSBACH_H
 #define ILSANSBACH_H
 
+#include <functional>
+#include <map>
 #include <string>
 #include <vector>
 
 #include "IParser.h"
-#include "IOperation.h"
+#include "Operation.h"
 #include "CurrentSection.h"
+
+using namespace std;
+
 
 class IlsAnsbach : public IParser
 {
 private:
-    std::vector<std::string> definedKeywords = {"ABSENDER", "FAX", "TERMIN", "EINSATZNUMMER", "NAME", "STRAßE", "ORT", "OBJEKT", "PLANNUMMER",
-                                         "STATION", "STRAßE", "ORT", "OBJEKT", "STATION", "SCHLAGW", "STICHWORT", "PRIO",
-                                         "EINSATZMITTEL", "ALARMIERT", "GEFORDERTE AUSSTATTUNG"};
-
+    vector<string> definedKeywords = {"ABSENDER", "FAX", "TERMIN", "EINSATZNUMMER", "NAME", "STRAßE", "ORT", "OBJEKT", "PLANNUMMER",
+                                      "STATION", "STRAßE", "ORT", "OBJEKT", "STATION", "SCHLAGW", "STICHWORT", "PRIO",
+                                      "EINSATZMITTEL", "ALARMIERT", "GEFORDERTE AUSSTATTUNG"};
+    vector<string> sectionNames = {"MITTEILER","EINSATZORT","ZIELORT","EINSATZGRUND", "EINSATZMITTEL", "BEMERKUNG", "ENDE FAX"};
+    map<string, CurrentSection> sectionResolver = { 
+            {"MITTEILER", CurrentSection::BMitteiler },
+            {"EINSATZORT", CurrentSection::CEinsatzort },
+            {"ZIELORT", CurrentSection::DZielort },
+            {"EINSATZGRUND", CurrentSection::EEinsatzgrund },
+            {"EINSATZMITTEL", CurrentSection::FEinsatzmittel },
+            {"BEMERKUNG", CurrentSection::GBemerkung },
+            {"ENDE FAX", CurrentSection::HFooter }
+        };
+        
+    typedef void (IlsAnsbach::*WorkerFunction)(vector<string>& lines, Operation* operation);
+    map<CurrentSection, WorkerFunction> sectionWorkerResolver;
+    
 public:
     IlsAnsbach();
     IlsAnsbach ( const IlsAnsbach& other );
     virtual ~IlsAnsbach();
     
-    IOperation* Parse(const std::string& filename);
-    IOperation* Parse(std::vector<std::string> lines);
+    IOperation* Parse(const string& filename);
+    IOperation* Parse(vector<string>& lines);
     
     IlsAnsbach& operator= ( const IlsAnsbach& other );
     bool operator== ( const IlsAnsbach& other ) const;
     
 private:
-    bool GetSection(const std::string &line, CurrentSection& section, bool& keywordsOnly);
+    CurrentSection GetSection(const string& line);
+    bool IsSectionBegin(const string& line);
+    void ParseLineWithKeyword(string line, string& prefix, string& value);
+        
+    void ReadFaxHeader(vector<string>& lines, Operation* operation);
+    void ReadMitteiler(vector<string>& lines, Operation* operation);
+    void ReadEinsatzort(vector<string>& lines, Operation* operation);
+    void ReadZielort(vector<string>& lines, Operation* operation);
+    void ReadEinsatzgrund(vector<string>& lines, Operation* operation);
+    void ReadEinsatzmittel(vector<string>& lines, Operation* operation);
+    void ReadBemerkung(vector<string>& lines, Operation* operation);
 };
 
 #endif // ILSANSBACH_H

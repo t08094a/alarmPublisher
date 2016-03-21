@@ -28,7 +28,7 @@ public:
     virtual ~IParser() {}
     
     virtual IOperation* Parse(const std::string& filename) = 0;
-    virtual IOperation* Parse(const std::vector<std::string> lines) = 0;
+    virtual IOperation* Parse(std::vector<std::string>& lines) = 0;
 };
 
 #endif // IPARSER_H

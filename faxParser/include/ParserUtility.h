@@ -106,6 +106,11 @@ public:
     //!
     //! \param lines
     static void Trim(vector<string>& lines);
+    
+    //! \brief Erases all empty items from the given vector.
+    //!
+    //! \param lines
+    static void EraseEmptyItems(vector<string>& lines);
 };
 
 #endif // PARSERUTILITY_H

@@ -22,7 +22,8 @@
 
 enum CurrentSection
 {
-    AHeader = 1,
+    Undefined = 0,
+    AHeader,
     BMitteiler,
     CEinsatzort,
     DZielort,

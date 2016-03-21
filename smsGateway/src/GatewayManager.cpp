@@ -22,6 +22,11 @@
 #include "GatewayFactory.h"
 #include "ConfigReader.h"
 
+#include <iostream>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
+
 using namespace std;
 
 GatewayManager::GatewayManager()
@@ -39,18 +44,41 @@ const set<string> GatewayManager::GetPossibleGatewayNames() const
     return GatewayFactory::GetInstance().GetAvailableGatewayNames();
 }
     
-void GatewayManager::SendMessage(string distributionList, string msg)
+void GatewayManager::SendMessage(const string&  distributionList, const string&  msg)
 {
-    string gateway = ConfigReader::GetInstance().Get("GatewaySelector.Active");
+    vector<string> gateways;
+    string gatewayConfig = ConfigReader::GetInstance().Get("GatewaySelector.Active");
     
+    if(gatewayConfig.find(";"))
+    {
+        boost::algorithm::split(gateways, gatewayConfig, boost::is_any_of(",;"), boost::algorithm::token_compress_on);                
+    }
+    else
+    {
+        gateways.push_back(gatewayConfig);
+    }
     
-    SendMessage(gateway, distributionList, msg);
+    for(string const& gw : gateways)
+    {
+        SendMessage(gw, distributionList, msg);
+    }
 }
 
-void GatewayManager::SendMessage(string gateway, string distributionList, string msg)
+void GatewayManager::SendMessage(const string& gateway, const string&  distributionList, const string&  msg)
 {
+    cout << "Calling gateway \"" << gateway << "\"" << endl;
+    
     // TODO: get telephone numbers based on distributionList. this defines the section in the config
     string telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers();
     
-    GatewayFactory::GetInstance().GetGateway(gateway).get()->SendMessage(telephoneNumbers, msg);
+    ISmsGateway* foundGateway = GatewayFactory::GetInstance().GetGateway(gateway).get();
+    
+    if(foundGateway != nullptr)
+    {
+        foundGateway->SendMessage(telephoneNumbers, msg);
+    }
+    else
+    {
+        cerr << "The gateway '" << gateway << "' was not found!" << endl;
+    }
 }

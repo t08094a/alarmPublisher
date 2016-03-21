@@ -21,10 +21,12 @@
 #include <exception>
 #include "GatewayFactory.h"
 #include "SmsTradeGateway.h"
+#include "ProwlGateway.h"
 
 GatewayFactory::GatewayFactory()
 {
     availableGatewayNames.insert(SmsTradeGateway::GetGatewayName());
+    availableGatewayNames.insert(ProwlGateway::GetGatewayName());
 }
 
 GatewayFactory::GatewayFactory(const GatewayFactory&)
@@ -57,6 +59,10 @@ shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
         if(name == SmsTradeGateway::GetGatewayName())
         {
             gw = new SmsTradeGateway();
+        }
+        else if (name == ProwlGateway::GetGatewayName())
+        {
+            gw = new ProwlGateway();
         }
     }
     else

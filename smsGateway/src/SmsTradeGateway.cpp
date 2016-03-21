@@ -65,7 +65,7 @@ void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, b
 
 void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, const map<string, string>& options)
 {
-    SmstradeBindingProxy server;
+    SmstradeBindingProxy server(SOAP_C_UTFSTRING);
     
     InitializeProxy(server);
     
@@ -101,7 +101,7 @@ void SmsTradeGateway::InitializeProxy(SmstradeBindingProxy& server)
     server.soap->send_timeout = 5;     // send timeout is 5s
     server.soap->recv_timeout = 5;     // receive timeout is 5s
     
-    soap soap_ssl_init();
+    soap_ssl_init();
     
     soap* serverSoap = &(*server.soap);
     

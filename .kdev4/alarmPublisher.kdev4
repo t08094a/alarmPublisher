@@ -19,5 +19,58 @@ Name=GCC
 Path=gcc
 Type=GCC
 
+[Launch]
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=debug
+Configured Launchers=gdb
+Name=smsGateway_test_ProwlGateway
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Configured from ProjectItem=alarmPublisher,smsGateway,tests,smsGateway_test_ProwlGateway
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_ProwlGateway
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
+isExecutable=false
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=debug
+Configured Launchers=gdb
+Name=smsGateway_test_GatewayManager
+Type=Native Application
+
+[Launch][Launch Configuration 1][Data]
+Configured from ProjectItem=alarmPublisher,smsGateway,tests,smsGateway_test_GatewayManager
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_GatewayManager
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
+isExecutable=false
+
+[Launch][Launch Configuration 2]
+Configured Launch Modes=debug
+Configured Launchers=gdb
+Name=faxparser_tests_IlsAnsbach
+Type=Native Application
+
+[Launch][Launch Configuration 2][Data]
+Configured from ProjectItem=alarmPublisher,faxParser,tests,faxparser_tests_IlsAnsbach
+Project Target=alarmPublisher,faxParser,tests,faxparser_tests_IlsAnsbach
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/faxParser/tests/
+isExecutable=false
+
+[Launch][Launch Configuration 3]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=smsGateway_test_UrlEncoder
+Type=Native Application
+
+[Launch][Launch Configuration 3][Data]
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_UrlEncoder
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
+isExecutable=false
+
 [Project]
 VersionControlSupport=kdevgit
+
+[SourceFileTemplates]
+LastUsedTemplate=/home/leif/.kde/share/apps/kdevfiletemplates/template_descriptions/cpp_basic.desktop
