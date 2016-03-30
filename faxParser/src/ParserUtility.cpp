@@ -26,8 +26,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/newline.hpp>
-#include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/regex.hpp>
 
 void ParserUtility::AppendLine(string& value, const string& line)
 {
@@ -75,17 +76,17 @@ boost::posix_time::ptime ParserUtility::ReadFaxTimestamp(const string& line, con
             is.imbue(format);
             is >> timestamp;
             
-            cout << "Parsed timestamp from fax header \"" << line << "\" to \"" << timestamp << "\" (Fallback: " << fallback << ")" << endl;
+            BOOST_LOG_TRIVIAL(debug) << "Parsed timestamp from fax header \"" << line << "\" to \"" << timestamp << "\" (Fallback: " << fallback << ")";
         }
     }
     catch(const exception& ex)
     {
-        cerr << "An exception occurred: " << ex.what() << endl;
+        BOOST_LOG_TRIVIAL(error) << "An exception occurred: " << ex.what();
         return fallback;
     }
     catch(...)
     {
-        cerr << "whoops!" << endl;
+        BOOST_LOG_TRIVIAL(error) << "whoops! Unknown error parsing fax timestamp!";
         return fallback;
     }
 
@@ -176,13 +177,13 @@ boost::posix_time::ptime ParserUtility::TryGetTimestampFromMessage(const string 
         is.imbue(format);
         is >> dt;
 
-        cout << "Parsed timestamp from message \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")" << endl;
+        BOOST_LOG_TRIVIAL(debug) << "Parsed timestamp from message \"" << message << "\" to \"" << dt << "\" (Fallback: " << fallback << ")";
 
         return dt;
     }
     catch(exception& ex)
     {
-        cerr << "An exception occurred: " << ex.what() << endl;
+        BOOST_LOG_TRIVIAL(error) << "An exception occurred: " << ex.what();
     }
 
     return dt;

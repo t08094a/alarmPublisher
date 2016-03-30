@@ -18,18 +18,23 @@
  *
  */
 
-#include "../include/ProwlGateway.h"
+#include "ProwlGateway.h"
 #include "ConfigReader.h"
 #include "UrlEncoding.h"
 
 #include <iostream>
 #include <sstream>
+
+#include <boost/log/trivial.hpp>
+
 #include <curl/curl.h>
 
 const string ProwlGateway::name = "Prowl";
 
 ProwlGateway::ProwlGateway() : apiKey(), url(), application(), event(), priority()
 {
+    BOOST_LOG_TRIVIAL(info) << "Create Prowl gateway";
+    
     InitializeFromConfig();
 }
 
@@ -88,11 +93,15 @@ void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
         // Check for errors
         if(res != CURLE_OK)
         {
-            cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
+            BOOST_LOG_TRIVIAL(error) << "curl_easy_perform() failed: " << curl_easy_strerror(res);
         }
 
         // always cleanup
         curl_easy_cleanup(curl);
+    }
+    else
+    {
+        BOOST_LOG_TRIVIAL(error) << "Unable to initialize curl for sending message to Prowl";
     }
 
     curl_global_cleanup();
@@ -100,6 +109,8 @@ void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
 
 void ProwlGateway::InitializeFromConfig()
 {
+    BOOST_LOG_TRIVIAL(info) << "Initialize Prowl from config";
+    
     // ==========
     // config.ini
     // ==========

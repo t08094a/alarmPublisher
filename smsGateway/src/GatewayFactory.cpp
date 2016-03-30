@@ -18,15 +18,20 @@
  *
  */
 
-#include <exception>
 #include "GatewayFactory.h"
-#include "SmsTradeGateway.h"
 #include "ProwlGateway.h"
+#include "SmsTradeGateway.h"
+
+#include <exception>
+
+#include <boost/log/trivial.hpp>
 
 GatewayFactory::GatewayFactory()
 {
-    availableGatewayNames.insert(SmsTradeGateway::GetGatewayName());
-    availableGatewayNames.insert(ProwlGateway::GetGatewayName());
+    BOOST_LOG_TRIVIAL(info) << "Create GatewayFactory";
+    
+    RegisterGateway(SmsTradeGateway::GetGatewayName());
+    RegisterGateway(ProwlGateway::GetGatewayName());
 }
 
 GatewayFactory::GatewayFactory(const GatewayFactory&)
@@ -52,6 +57,8 @@ GatewayFactory& GatewayFactory::GetInstance()
 
 shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
 {
+    BOOST_LOG_TRIVIAL(info) << "Create gateway \"" << name << "\"";
+    
     ISmsGateway* gw = nullptr;
     
     if(availableGatewayNames.find(name) != availableGatewayNames.end())
@@ -85,6 +92,7 @@ shared_ptr<ISmsGateway> GatewayFactory::GetGateway(const string& name)
     map<string, shared_ptr<ISmsGateway>>::iterator it = availableGateways.find(name);
     
     shared_ptr<ISmsGateway> gateway;
+    
     if(it == availableGateways.end())
     {
         // if no instance with the proper type was found, make one
@@ -102,3 +110,8 @@ shared_ptr<ISmsGateway> GatewayFactory::GetGateway(const string& name)
     return gateway;
 }
 
+void GatewayFactory::RegisterGateway(const string& gatewayName)
+{
+    BOOST_LOG_TRIVIAL(info) << "Register gateway \"" << gatewayName << "\"";
+    availableGatewayNames.insert(gatewayName);
+}

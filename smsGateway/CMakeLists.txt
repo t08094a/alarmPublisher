@@ -13,10 +13,12 @@ message(STATUS "============================")
 set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
+
 # Load settings for the external project "Boost".
 # The components "system" and "filesystem" from "Boost" version 1.55.0 or
 # greater are required.
-find_package( Boost 1.55.0 REQUIRED COMPONENTS log regex date_time filesystem thread )
+find_package( Boost 1.55.0 REQUIRED COMPONENTS system log regex date_time filesystem thread )
 if (Boost_FOUND)
     # From the offical documentation:
     # Add include directories to the build. [...] If the SYSTEM option is given,

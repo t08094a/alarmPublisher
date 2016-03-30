@@ -14,10 +14,12 @@ message(STATUS "============================")
 # include_directories (${PROJECT_SOURCE_DECLARATION_DIRECTORY})
 # include_directories(tests)
 
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
+
 # Load settings for the external project "Boost".
 # The components "system" and "filesystem" from "Boost" version 1.55.0 or
 # greater are required.
-find_package( Boost 1.55.0 REQUIRED COMPONENTS date_time )
+find_package( Boost 1.55.0 REQUIRED COMPONENTS system date_time log log_setup )
 if (Boost_FOUND)
     # From the offical documentation:
     # Add include directories to the build. [...] If the SYSTEM option is given,
@@ -53,6 +55,6 @@ include_directories(${faxparser_SOURCE_DIR})
 add_executable(${PROJECT_NAME} ${SRC_FILES}) 
 
 # Define the libraries this project depends upon
-target_link_libraries (${PROJECT_NAME} faxparser smsGateway)
+target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

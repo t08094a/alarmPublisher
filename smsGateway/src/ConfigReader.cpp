@@ -21,11 +21,15 @@
 #include "ConfigReader.h"
 
 #include <sstream>
+
 #include <boost/filesystem.hpp>
+#include <boost/log/trivial.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
 ConfigReader::ConfigReader()
 {
+    BOOST_LOG_TRIVIAL(debug) << "Create ConfigReader";
+    
     Initialize();
 }
 
@@ -39,7 +43,7 @@ void ConfigReader::Initialize()
     const string filename = "smsgateway.config";
     
     boost::filesystem::path currentPath(boost::filesystem::current_path());
-    cout << "Search config file '" << filename << "' in path '" << currentPath << "'" << endl;
+    BOOST_LOG_TRIVIAL(info) << "Search config file \"" << filename << "\" in path " << currentPath;
     
     string resultFilename;
     
@@ -48,12 +52,14 @@ void ConfigReader::Initialize()
         // config file does not exist in current path -> try read it from /etc
         string etcFullPath = "/etc/alarmPublisher/" + filename;
         
-        cout << "The file '" << filename << "' does not exist -> try to read it from '" << etcFullPath << "'" << endl;
+        BOOST_LOG_TRIVIAL(warning) << "The config file \"" << filename << "\" does not exist -> try to read it from \"" << etcFullPath << "\"";
         
         if ( !boost::filesystem::exists( etcFullPath ) )
         {
-            cout << "The file '" << etcFullPath << "' does not exist -> kill" << endl;
-            return;
+            string msg = "The config file \"" + etcFullPath + "\" does not exist -> kill";
+            BOOST_LOG_TRIVIAL(fatal) << msg;
+            
+            throw runtime_error(msg);
         }
         else
         {
@@ -71,7 +77,7 @@ void ConfigReader::Initialize()
     }
     catch(const boost::property_tree::ini_parser_error &e)
     {
-        cout << e.what() << endl;
+        BOOST_LOG_TRIVIAL(error) << e.what();
     }
 }
 
@@ -85,7 +91,7 @@ string ConfigReader::Get(const string& path) const
     }
     catch(const boost::property_tree::ini_parser_error &e)
     {
-        cout << e.what() << endl;
+        BOOST_LOG_TRIVIAL(error) << e.what();
     }
     
     return result;
@@ -96,7 +102,7 @@ string ConfigReader::GetTelephonNumbers() const
     boost::optional<const boost::property_tree::ptree&> recipientNode = pt.get_child_optional("Recipients");
     if(recipientNode.is_initialized() == false)
     {
-        cout << "Unable to read the telephone numbers. The root node is not initialized" << endl;
+        BOOST_LOG_TRIVIAL(error) << "Unable to read the telephone numbers. The root node is not initialized";
         return "";
     }
     
@@ -105,7 +111,7 @@ string ConfigReader::GetTelephonNumbers() const
     
     stringstream ss;
     
-    cout << "Found the following SMS recipients:" << endl;
+    BOOST_LOG_TRIVIAL(info) << "Found the following SMS recipients:" << endl;
     
     for(const pair<string, boost::property_tree::ptree> &kv : recipientNode.get())
     {
@@ -114,7 +120,7 @@ string ConfigReader::GetTelephonNumbers() const
         string name = kv.first;
         string number = kv.second.get_value<string>();
     
-        cout << name << ": " << number << endl;
+        BOOST_LOG_TRIVIAL(info) << name << ": " << number << endl;
         
         ss << number;
         

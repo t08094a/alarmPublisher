@@ -18,14 +18,16 @@
  *
  */
 
-#include "GatewayManager.h"
-#include "GatewayFactory.h"
 #include "ConfigReader.h"
+#include "GatewayFactory.h"
+#include "GatewayManager.h"
 
 #include <iostream>
 #include <vector>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
 
@@ -44,7 +46,7 @@ const set<string> GatewayManager::GetPossibleGatewayNames() const
     return GatewayFactory::GetInstance().GetAvailableGatewayNames();
 }
     
-void GatewayManager::SendMessage(const string&  distributionList, const string&  msg)
+void GatewayManager::SendMessage(const string& distributionList, const string& msg)
 {
     vector<string> gateways;
     string gatewayConfig = ConfigReader::GetInstance().Get("GatewaySelector.Active");
@@ -66,7 +68,7 @@ void GatewayManager::SendMessage(const string&  distributionList, const string& 
 
 void GatewayManager::SendMessage(const string& gateway, const string&  distributionList, const string&  msg)
 {
-    cout << "Calling gateway \"" << gateway << "\"" << endl;
+    BOOST_LOG_TRIVIAL(info) << "Send message to \"" << distributionList << "\" via: " << gateway;
     
     // TODO: get telephone numbers based on distributionList. this defines the section in the config
     string telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers();
@@ -79,6 +81,6 @@ void GatewayManager::SendMessage(const string& gateway, const string&  distribut
     }
     else
     {
-        cerr << "The gateway '" << gateway << "' was not found!" << endl;
+        BOOST_LOG_TRIVIAL(error) << "The gateway \"" << gateway << "\" was not found!";
     }
 }

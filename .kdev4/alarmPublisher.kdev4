@@ -20,7 +20,7 @@ Path=gcc
 Type=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=debug
@@ -66,6 +66,17 @@ Type=Native Application
 
 [Launch][Launch Configuration 3][Data]
 Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_UrlEncoder
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
+isExecutable=false
+
+[Launch][Launch Configuration 4]
+Configured Launch Modes=debug
+Configured Launchers=gdb
+Name=smsGateway_test_SmsTradeGateway
+Type=Native Application
+
+[Launch][Launch Configuration 4][Data]
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
 Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
 isExecutable=false
 

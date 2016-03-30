@@ -21,14 +21,19 @@
 #include "OperationKeywords.h"
 #include "OperationResource.h"
 #include "ParserUtility.h"
+
 #include <algorithm>
-#include <iostream>
 #include <fstream>
+#include <iostream>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/log/trivial.hpp>
 
 IlsAnsbach::IlsAnsbach()
 {
+    BOOST_LOG_TRIVIAL(info) << "Initialize ILS Ansbach parsing algorithm";
+    
     sectionWorkerResolver[CurrentSection::AHeader] = &IlsAnsbach::ReadFaxHeader;
     sectionWorkerResolver[CurrentSection::BMitteiler] = &IlsAnsbach::ReadMitteiler;
     sectionWorkerResolver[CurrentSection::CEinsatzort] = &IlsAnsbach::ReadEinsatzort;
@@ -54,12 +59,10 @@ IOperation* IlsAnsbach::Parse(const string& filename)
     ifstream ifs(filename.c_str(), std::ios::in | std::ios::binary);
     if(!ifs || ifs.is_open() == false)
     {
-        cerr << "Error opening file \"" << filename << "\"" << endl;
+        BOOST_LOG_TRIVIAL(error) << "Error opening file \"" << filename << "\"";
         return nullptr;
     }
     
-    cout << "Parsing file: " << filename << endl;
-
     vector<std::string> data;
     string line;
     
@@ -73,6 +76,8 @@ IOperation* IlsAnsbach::Parse(const string& filename)
 
 IOperation* IlsAnsbach::Parse(vector<string>& lines)
 {
+    BOOST_LOG_TRIVIAL(info) << "Parse with ILS Ansbach parsing algorithm";
+    
     Operation* operation = new Operation();
     
     ParserUtility::Trim(lines);
@@ -106,6 +111,10 @@ IOperation* IlsAnsbach::Parse(vector<string>& lines)
             section = CurrentSection::Undefined;
         }
     }
+    
+    BOOST_LOG_TRIVIAL(debug) << "====== Parsed Result: ========================";
+    BOOST_LOG_TRIVIAL(debug) << (operation != nullptr ? operation->ToString() : "UNDEFINED!!!");
+    BOOST_LOG_TRIVIAL(debug) << "==============================================";
     
     return operation;
 }
@@ -313,7 +322,7 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
 
                 if(zipCode.empty())
                 {
-                    //Logger.Instance.LogFormat(LogType.Warning, this, "Could not find a zip code for city '{0}'. Route planning may fail or yield wrong results!", operation.Einsatzort.City);
+                    BOOST_LOG_TRIVIAL(warning) << "Could not find a zip code for city \"" << operation->GetEinsatzort().GetCity() << "\". Route planning may fail or yield wrong results!";
                 }
             }
 

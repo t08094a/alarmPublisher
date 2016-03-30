@@ -43,6 +43,7 @@ private:
     GatewayFactory& operator=(const GatewayFactory&);
     
     shared_ptr<ISmsGateway> CreateGateway(const string& name);
+    void RegisterGateway(const string& gatewayName);
 
 public:
     ~GatewayFactory();

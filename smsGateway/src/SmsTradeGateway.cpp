@@ -21,14 +21,19 @@
 #include "SmsTradeGateway.h"
 #include "SmstradeBinding.nsmap" // get the gSOAP-generated namespace bindings
 #include "ConfigReader.h"
-#include <iostream>
+
 #include <fstream>
+#include <iostream>
 #include <stdsoap2.h>
+
+#include <boost/log/trivial.hpp>
 
 const string SmsTradeGateway::name = "SmsTrade";
 
 SmsTradeGateway::SmsTradeGateway() : key(), route("direct"), from("FF Alarm")
 {
+    BOOST_LOG_TRIVIAL(info) << "Create SmsTrade gateway";
+    
     InitializeFromConfig();
 }
 
@@ -87,7 +92,10 @@ void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& to
     int result = server.sendSMS(key, to, msg, route, from, returnData); // $returnval Array mit Daten: 0 => Returncode, 1 => MessageID, 2 => entstandene Kosten, 3 => Anzahl der SMS, 4 => Zeitpunkt des Versandes
     if(result != SOAP_OK)
     {
-        server.soap_stream_fault(std::cerr);
+        ostringstream os;
+        server.soap_stream_fault(os);
+        
+        BOOST_LOG_TRIVIAL(error) << os.str();
     }
     else
     {
@@ -107,14 +115,20 @@ void SmsTradeGateway::InitializeProxy(SmstradeBindingProxy& server)
     
     if(serverSoap == nullptr)
     {
-        soap_stream_fault(serverSoap, std::cerr);
+        ostringstream os;
+        soap_stream_fault(serverSoap, os);
+        
+        BOOST_LOG_TRIVIAL(error) << os.str();
     }
     
     int result = soap_ssl_client_context(serverSoap, SOAP_SSL_NO_AUTHENTICATION, NULL, NULL, NULL, NULL, NULL); // SOAP_SSL_DEFAULT besser: SOAP_SSL_CLIENT
     
     if(result)
     {
-        soap_stream_fault(serverSoap, std::cerr);
+        ostringstream os;
+        soap_stream_fault(serverSoap, os);
+        
+        BOOST_LOG_TRIVIAL(error) << os.str();
     }
 }
 
@@ -125,12 +139,17 @@ void SmsTradeGateway::SetParameter(SmstradeBindingProxy& server, const string& p
     int result = server.setOptionalParam(parameterName, value, setOptionalParamResponse);
     if(result != SOAP_OK)
     {
-        server.soap_stream_fault(std::cerr);
+        ostringstream os;
+        server.soap_stream_fault(os);
+        
+        BOOST_LOG_TRIVIAL(error) << os.str();
     }
 }
 
 void SmsTradeGateway::InitializeFromConfig()
 {
+    BOOST_LOG_TRIVIAL(info) << "Initialize SmsTrade from config";
+    
 /*
 ==========
 config.ini
