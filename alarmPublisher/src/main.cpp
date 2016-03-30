@@ -143,9 +143,8 @@ void InitLogging()
     
     sink->set_formatter
     (
-        expr::format("%1%  Z. %2%: [%3%] %4%")
+        expr::format("%1% [%2%] %3%")
             % expr::format_date_time< boost::posix_time::ptime >("TimeStamp", "%Y-%m-%d %H:%M:%S:%f")
-            % expr::attr< unsigned int >("LineID")
             % logging::trivial::severity
             % expr::smessage
     );
