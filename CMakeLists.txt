@@ -5,10 +5,10 @@ project(root)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/CMakeModules/")
 
 # set the installation prefix to a custom one for testing purpose
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/installed" CACHE PATH "default install path" FORCE )
-    message(STATUS "Install prefix (overriden): ${CMAKE_INSTALL_PREFIX}")
-endif()
+# if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#     set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/installed" CACHE PATH "default install path" FORCE )
+#     message(STATUS "Install prefix (overriden): ${CMAKE_INSTALL_PREFIX}")
+# endif()
 
 set(CMAKE_BUILD_TYPE Debug)
 message( STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}" )

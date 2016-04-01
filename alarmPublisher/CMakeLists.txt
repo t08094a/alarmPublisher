@@ -14,11 +14,11 @@ SET(PROJECT_VER_PATCH 0)
 SET(PROJECT_VER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}.${PROJECT_VER_PATCH}")
 SET(PROJECT_APIVER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}")
 
-# set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
-# set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
+set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
-# include_directories (${PROJECT_SOURCE_DECLARATION_DIRECTORY})
-# include_directories(tests)
+include_directories (${PROJECT_SOURCE_DECLARATION_DIRECTORY})
+include_directories(tests)
 
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
@@ -61,8 +61,8 @@ include_directories(${faxparser_SOURCE_DIR})
 add_executable(${PROJECT_NAME} ${SRC_FILES}) 
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
-        VERSION ${PROJECT_VER}
-        SOVERSION ${PROJECT_APIVER})
+                      VERSION ${PROJECT_VER}
+                      SOVERSION ${PROJECT_APIVER})
 
 # Define the libraries this project depends upon
 target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway)

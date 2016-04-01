@@ -26,6 +26,7 @@
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/expressions/formatters/date_time.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/trivial.hpp>
@@ -37,6 +38,7 @@
 #include "../../faxParser/include/IlsAnsbach.h"
 #include "../../faxParser/include/ILocation.h"
 #include "../../smsGateway/include/GatewayManager.h"
+#include "ConfigReader.h"
 
 using namespace std;
 
@@ -110,13 +112,15 @@ string PrepareMessage(IOperation* operation)
     result << "Einsatzort: " << einsatzort << endl;
     result << "Schlagw.:   " << keywords << endl;
     result << "Priorität:  " << priority << endl;
-    result << "Bemerkung:  " << comment << endl;
+    result << "Bemerkung:  " << comment;
     
     string msg = result.str();
     
+    BOOST_LOG_TRIVIAL(debug) << "";
     BOOST_LOG_TRIVIAL(debug) << "====== Generated message: ====================";
-    BOOST_LOG_TRIVIAL(debug) << result;
+    BOOST_LOG_TRIVIAL(debug) << msg;
     BOOST_LOG_TRIVIAL(debug) << "==============================================";
+    BOOST_LOG_TRIVIAL(debug) << "";
     
     return msg;
 }
@@ -129,10 +133,18 @@ void InitLogging()
     namespace sinks = boost::log::sinks;
     namespace keywords = boost::log::keywords;
 
+    string logFilePattern = "alarmPublisher_%Y%m%d_%H%M%S.log";
+    string logOutputDirectory = ConfigReader::GetInstance().Get("Logging.LogOutput");
+    
+    boost::filesystem::path path = logOutputDirectory;
+    path /= logFilePattern;
+    
+    BOOST_LOG_TRIVIAL(debug) << "Log output: " << path.native();
+    
     boost::shared_ptr<logging::core> core = logging::core::get();
     
     boost::shared_ptr<sinks::text_file_backend> backend = boost::make_shared<sinks::text_file_backend>(
-        keywords::file_name = "alarmPublisher_%Y%m%d_%H%M%S.log"
+        keywords::file_name = path.native()
     );
     
     // Wrap it into the frontend and register in the core.

@@ -10,7 +10,7 @@ message(STATUS "============================")
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "============================")
 
-set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
+set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../alarmPublisher/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
 add_definitions(-std=c++11)

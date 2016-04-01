@@ -40,7 +40,7 @@ ConfigReader::~ConfigReader()
 
 void ConfigReader::Initialize()
 {
-    const string filename = "smsgateway.config";
+    const string filename = "alarmPublisher.config";
     
     boost::filesystem::path currentPath(boost::filesystem::current_path());
     BOOST_LOG_TRIVIAL(info) << "Search config file \"" << filename << "\" in path " << currentPath;

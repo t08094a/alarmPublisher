@@ -8,13 +8,14 @@ message(STATUS "============================")
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "============================")
 
-set (PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR})
+set (PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/../../alarmPublisher/include)
 set (PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 set(CMAKE_BUILD_TYPE Debug)
 message( STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}" )
 
 add_definitions(-std=c++11)
+add_definitions(-DBOOST_LOG_DYN_LINK)
 
 enable_testing()
 
@@ -46,7 +47,6 @@ endif ()
 find_package(GSOAP 2.8 REQUIRED)
 message(STATUS "The GSOAP version: ${GSOAP_VERSION}")
 message(STATUS "The GSOAP include directory: ${GSOAP_INCLUDE_DIR}")
-#message(STATUS "The GSOAP libraries: ${GSOAP_LIBRARIES}")
 message(STATUS "The GSOAP SSL libraries: ${GSOAP_SSL_LIBRARIES}")
 
 
@@ -62,19 +62,15 @@ set(SMSTRADE_SRC_FILES ${CMAKE_BINARY_DIR}/generated/SmsTrade/SmstradeBinding.ns
 
 message(STATUS "Source files: ${SMSTRADE_SRC_FILES}")
 
-add_executable(${PROJECT_NAME}_SmsTradeGateway TestRunner.cpp SmsTradeGatewayTest.cpp ${SMSTRADE_SRC_FILES}) 
+add_executable(${PROJECT_NAME}_SmsTradeGateway TestRunner.cpp SmsTradeGatewayTest.cpp ${SMSTRADE_SRC_FILES} ${PROJECT_SOURCE_DIR}/../../alarmPublisher/src/ConfigReader.cpp) 
 target_link_libraries(${PROJECT_NAME}_SmsTradeGateway PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoapssl++)
 add_test(NAME SmsTradeGateway COMMAND ${PROJECT_NAME}_SmsTradeGateway)
 
-add_executable(${PROJECT_NAME}_ProwlGateway TestRunner.cpp ProwlGatewayTest.cpp) 
+add_executable(${PROJECT_NAME}_ProwlGateway TestRunner.cpp ProwlGatewayTest.cpp ${PROJECT_SOURCE_DIR}/../../alarmPublisher/src/ConfigReader.cpp) 
 target_link_libraries(${PROJECT_NAME}_ProwlGateway PRIVATE smsGateway ${Boost_LIBRARIES})
 add_test(NAME ProwlGateway COMMAND ${PROJECT_NAME}_ProwlGateway)
 
-add_executable(${PROJECT_NAME}_ConfigReader TestRunner.cpp ConfigReaderTest.cpp) 
-target_link_libraries(${PROJECT_NAME}_ConfigReader PRIVATE smsGateway ${Boost_LIBRARIES})
-add_test(NAME ConfigReader COMMAND ${PROJECT_NAME}_ConfigReader)
-
-add_executable(${PROJECT_NAME}_GatewayManager TestRunner.cpp GatewayManagerTest.cpp ${SMSTRADE_SRC_FILES}) 
+add_executable(${PROJECT_NAME}_GatewayManager TestRunner.cpp GatewayManagerTest.cpp ${PROJECT_SOURCE_DIR}/../../alarmPublisher/src/ConfigReader.cpp ${SMSTRADE_SRC_FILES}) 
 target_link_libraries(${PROJECT_NAME}_GatewayManager PRIVATE smsGateway ${Boost_LIBRARIES} ${GSOAP_SSL_LIBRARIES} gsoapssl++)
 add_test(NAME GatewayManager COMMAND ${PROJECT_NAME}_GatewayManager)
 
