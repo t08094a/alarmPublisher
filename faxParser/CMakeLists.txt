@@ -6,9 +6,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/CMakeModul
 set(PROJECT_NAME "faxparser" CXX)
 project(${PROJECT_NAME})
 
+add_definitions(-std=c++11)
+
 message(STATUS "============================")
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "============================")
+
+SET(LIBRARYNAME ${PROJECT_NAME})
+SET(LIB_MAJOR 0)
+SET(LIB_MINOR 0)
+SET(LIB_RELEASE 1)
+SET(_soversion ${LIB_MAJOR}.${LIB_MINOR}.${LIB_RELEASE})
 
 set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
@@ -22,6 +30,9 @@ aux_source_directory(include HEADER_FILES)
 
 add_library(${PROJECT_NAME} ${SRC_FILES})
 message(STATUS "Source files: ${SRC_FILES}")
+
+set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${LIB_MAJOR})
+#VERSION ${_soversion}
 
 add_subdirectory(tests)
 
@@ -44,7 +55,8 @@ if (Boost_FOUND)
     # such as the compiler skipping warnings [...])."
     include_directories (SYSTEM ${Boost_INCLUDE_DIR})
 
-    message(STATUS "Boost libs: ${Boost_LIBRARIES}")
+    message(STATUS "The Boost include directory: ${Boost_INCLUDE_DIR}")
+    message(STATUS "The Boost libraries: ${Boost_LIBRARIES})")
     
     # From the offical documentation:
     # "Specify directories in which the linker will look for libraries. [...] Note
@@ -56,16 +68,12 @@ if (Boost_FOUND)
 endif ()
 
 
-#exe install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 # install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 # install(FILES ${HEADER_FILES} DESTINATION include)
 
 # 'make install' to the correct location
-install(TARGETS ${PROJECT_NAME}
-    ARCHIVE  DESTINATION lib
-    LIBRARY  DESTINATION lib
-    RUNTIME  DESTINATION bin)  # This is for Windows
-install(FILES ${HEADER_FILES} DESTINATION include/${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME} DESTINATION alarmPublisher)
+#install(FILES ${HEADER_FILES} DESTINATION include/${PROJECT_NAME})
 
 target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES})
 

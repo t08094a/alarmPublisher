@@ -13,7 +13,10 @@ message(STATUS "============================")
 set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
-ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
+add_definitions(-std=c++11)
+add_definitions(-DBOOST_LOG_DYN_LINK)
+
+enable_testing()
 
 # Load settings for the external project "Boost".
 # The components "system" and "filesystem" from "Boost" version 1.55.0 or
@@ -70,10 +73,11 @@ message(STATUS "Header files: ${HEADER_FILES}")
 include_directories (${PROJECT_SOURCE_DECLARATION_DIRECTORY} ${CMAKE_BINARY_DIR}/generated/SmsTrade ${GSOAP_INCLUDE_DIR})
 include_directories(tests)
 
-add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
+add_library(${PROJECT_NAME} ${SRC_FILES})
 
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
-install(FILES ${HEADER_FILES} DESTINATION include)
+# 'make install' to the correct location
+install(TARGETS ${PROJECT_NAME} DESTINATION alarmPublisher)
+#install(FILES ${HEADER_FILES} DESTINATION include)
 
 add_subdirectory(tests)
 

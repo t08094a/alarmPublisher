@@ -76,6 +76,7 @@ Name=smsGateway_test_SmsTradeGateway
 Type=Native Application
 
 [Launch][Launch Configuration 4][Data]
+Configured from ProjectItem=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
 Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
 Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
 isExecutable=false

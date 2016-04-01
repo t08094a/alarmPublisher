@@ -57,4 +57,4 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 # Define the libraries this project depends upon
 target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} DESTINATION alarmPublisher)
