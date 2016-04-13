@@ -111,7 +111,7 @@ string ConfigReader::GetTelephonNumbers() const
     
     stringstream ss;
     
-    BOOST_LOG_TRIVIAL(info) << "Found the following SMS recipients:" << endl;
+    BOOST_LOG_TRIVIAL(info) << "Found the following SMS recipients:";
     
     for(const pair<string, boost::property_tree::ptree> &kv : recipientNode.get())
     {
@@ -120,7 +120,7 @@ string ConfigReader::GetTelephonNumbers() const
         string name = kv.first;
         string number = kv.second.get_value<string>();
     
-        BOOST_LOG_TRIVIAL(info) << name << ": " << number << endl;
+        BOOST_LOG_TRIVIAL(info) << name << ": " << number;
         
         ss << number;
         

@@ -55,6 +55,8 @@ string ProwlGateway::GetName() const
 
 void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
 {
+    BOOST_LOG_TRIVIAL(info) << "Send message via Prowl";
+    
     CURL *curl;
     
     curl_global_init(CURL_GLOBAL_DEFAULT);

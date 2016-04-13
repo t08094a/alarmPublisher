@@ -70,6 +70,8 @@ void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, b
 
 void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, const map<string, string>& options)
 {
+    BOOST_LOG_TRIVIAL(info) << "Send message via SmsTrade";
+
     SmstradeBindingProxy server(SOAP_C_UTFSTRING);
     
     InitializeProxy(server);
