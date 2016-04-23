@@ -70,14 +70,11 @@ void GatewayManager::SendMessage(const string& gateway, const string&  distribut
 {
     BOOST_LOG_TRIVIAL(info) << "Send message to \"" << distributionList << "\" via: " << gateway;
     
-    // TODO: get telephone numbers based on distributionList. this defines the section in the config
-    string telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers();
-    
     ISmsGateway* foundGateway = GatewayFactory::GetInstance().GetGateway(gateway).get();
     
     if(foundGateway != nullptr)
     {
-        foundGateway->SendMessage(telephoneNumbers, msg);
+        foundGateway->SendMessage(distributionList, msg);
     }
     else
     {

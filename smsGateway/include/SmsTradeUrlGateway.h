@@ -18,35 +18,37 @@
  *
  */
 
-#ifndef PROWLGATEWAY_H
-#define PROWLGATEWAY_H
+#ifndef SMSTRADEURLGATEWAY_H
+#define SMSTRADEURLGATEWAY_H
 
 #include <map>
 #include "ISmsGateway.h"
 
-
 using namespace std;
 
-class ProwlGateway : public ISmsGateway
+class SmsTradeUrlGateway : public ISmsGateway
 {
 private:
     static const string name;
-    string apiKey;
     string url;
-    string application;
-    string event;
-    string priority;
+    string key;        // Persönlicher Identifikationscode (String, bis zu 35 Zeichen)
+    string route;      // Auswahl der SMS-Route (basic|economy|gold|direct)
+    string from;       // Absenderkennung der SMS (String, bis zu 11 Zeichen; Integer, bis zu 16 Zeichen)
+    
+    const string BuildParameter(const string& msg, const string& distributionList, bool debug);
     void InitializeFromConfig();
-    const string BuildNotificationRequestUrl(const string& msg, bool debug);
     
 public:
-    ProwlGateway();
-    ~ProwlGateway();
+    SmsTradeUrlGateway();
+    SmsTradeUrlGateway(const SmsTradeUrlGateway& other);
+    ~SmsTradeUrlGateway();
     
     static const string GetGatewayName();
     string GetName() const;
     
-    void SendMessage( const string& distributionList, const string& msg, bool debug = false );
+    void SendMessage(const string& distributionList, const string& msg, bool debug = false );
+    
+    SmsTradeUrlGateway& operator=(const SmsTradeUrlGateway& other);
 };
 
-#endif // PROWLGATEWAY_H
+#endif // SMSTRADEURLGATEWAY_H

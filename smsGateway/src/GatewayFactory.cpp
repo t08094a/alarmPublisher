@@ -21,6 +21,7 @@
 #include "GatewayFactory.h"
 #include "ProwlGateway.h"
 #include "SmsTradeGateway.h"
+#include "SmsTradeUrlGateway.h"
 
 #include <exception>
 
@@ -31,6 +32,7 @@ GatewayFactory::GatewayFactory()
     BOOST_LOG_TRIVIAL(info) << "Create GatewayFactory";
     
     RegisterGateway(SmsTradeGateway::GetGatewayName());
+    RegisterGateway(SmsTradeUrlGateway::GetGatewayName());
     RegisterGateway(ProwlGateway::GetGatewayName());
 }
 
@@ -40,11 +42,6 @@ GatewayFactory::GatewayFactory(const GatewayFactory&)
 }
 
 GatewayFactory::~GatewayFactory()
-{
-    // nop
-}
-
-GatewayFactory& GatewayFactory::operator=(const GatewayFactory&)
 {
     // nop
 }
@@ -67,6 +64,10 @@ shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
         {
             gw = new SmsTradeGateway();
         }
+        else if(name == SmsTradeUrlGateway::GetGatewayName())
+        {
+            gw = new SmsTradeUrlGateway();
+        }
         else if (name == ProwlGateway::GetGatewayName())
         {
             gw = new ProwlGateway();
@@ -74,7 +75,7 @@ shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
     }
     else
     {
-        throw invalid_argument("The sms gateway '" + name + "' does not exist!");
+        throw invalid_argument("The gateway '" + name + "' does not exist!");
     }
     
     shared_ptr<ISmsGateway> gateway(gw);

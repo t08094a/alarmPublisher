@@ -27,8 +27,15 @@
 #include <stdsoap2.h>
 
 #include <boost/log/trivial.hpp>
+#include <boost/lexical_cast.hpp>
 
 const string SmsTradeGateway::name = "SmsTrade";
+
+
+// SmsTradeGateway::responseCodes = {
+//     {"10", "ReceiverNotCorrect"},
+//     {"20", "SenderNotCorrect"}
+// };
 
 SmsTradeGateway::SmsTradeGateway() : key(), route("direct"), from("FF Alarm")
 {
@@ -52,7 +59,7 @@ string SmsTradeGateway::GetName() const
     return name;
 }
 
-void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, bool debug) // to = Empfänger der Nachricht (Integer, bis zu 16 Zeichen)
+void SmsTradeGateway::SendMessage(const string& distributionList, const string& msg, bool debug) // to = Empfänger der Nachricht (Integer, bis zu 16 Zeichen)
 {
     map<string, string> options;
     
@@ -62,13 +69,14 @@ void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, b
     }
     options["message_id"] = "1";      // Aktiviert die Rückgabe der Message ID
     options["count"] = "1";           // Aktiviert die Rückgabe der SMS Anzahl
-    options["dlr"] = "1";             // Aktiviert den Empfang eines Versandberichtes für diese SMS
+    //options["dlr"] = "1";             // Aktiviert den Empfang eines Versandberichtes für diese SMS
     options["messagetype"] = "flash"; // Typ der Nachricht: flash, unicode, binary, voice
+    options["concat"] = "1";
     
-    SendMessage(recipients, msg, options);
+    SendMessage(distributionList, msg, options);
 }
 
-void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, const map<string, string>& options)
+void SmsTradeGateway::SendMessage(const string& distributionList, const string& msg, const map<string, string>& options)
 {
     BOOST_LOG_TRIVIAL(info) << "Send message via SmsTrade";
 
@@ -81,27 +89,46 @@ void SmsTradeGateway::SendMessage(const string& recipients, const string& msg, c
         SetParameter(server, it->first, it->second);
     }
     
-    SendMessage(server, recipients, msg);
+    SendMessage(server, distributionList, msg);
         
     server.destroy();
 }
 
-void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& to, const string& msg)
+void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& distributionList, const string& msg)
 {
+    // TODO: get telephone numbers based on distributionList. this defines the section in the config
+    vector<string> telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers(distributionList);
+        
     struct ns1__sendSMSResponse returnData;
-        
-    // returns error code or SOAP_OK
-    int result = server.sendSMS(key, to, msg, route, from, returnData); // $returnval Array mit Daten: 0 => Returncode, 1 => MessageID, 2 => entstandene Kosten, 3 => Anzahl der SMS, 4 => Zeitpunkt des Versandes
-    if(result != SOAP_OK)
+    
+    for(string const& number : telephoneNumbers)
     {
-        ostringstream os;
-        server.soap_stream_fault(os);
+        // returns error code or SOAP_OK
+        // $returnval Array mit Daten: 0 => Returncode, 1 => MessageID, 2 => entstandene Kosten, 3 => Anzahl der SMS, 4 => Zeitpunkt des Versandes
+        int result = server.sendSMS(key, number, msg, route, from, returnData);
         
-        BOOST_LOG_TRIVIAL(error) << os.str();
-    }
-    else
-    {
-        // TODO: returnData auswerten
+        if(result != SOAP_OK)
+        {
+            ostringstream os;
+            server.soap_stream_fault(os);
+            
+            BOOST_LOG_TRIVIAL(error) << "Send to number " << number << "causes error:" << endl << os.str();
+        }
+        else
+        {
+            if(returnData.sendSMSResponse != nullptr &&
+               returnData.sendSMSResponse->__size > 0)
+            {
+                string returnCode = returnData.sendSMSResponse->__ptr[0];
+                string response = ParseResponseCode(returnCode);
+                
+                BOOST_LOG_TRIVIAL(info) << "Send to number " << number << ":\t" << response;
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(info) << "Send to number " << number;
+            }
+        }
     }
 }
 
@@ -166,3 +193,16 @@ From = FF Alarm
     route = ConfigReader::GetInstance().Get("SmsTrade.Route");
     from = ConfigReader::GetInstance().Get("SmsTrade.From");
 }
+
+string SmsTradeGateway::ParseResponseCode(string code)
+{
+    map<string, string>::iterator it = responseCode.find(code);
+    
+    if(it == responseCode.end())
+    {
+        return "Unbekannter Code '" + code + "'";
+    }
+    
+    return it->second;
+}
+

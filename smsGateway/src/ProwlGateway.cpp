@@ -53,7 +53,7 @@ string ProwlGateway::GetName() const
     return name;
 }
 
-void ProwlGateway::SendMessage(const string& to, const string& msg, bool debug)
+void ProwlGateway::SendMessage(const string& distributionList, const string& msg, bool debug)
 {
     BOOST_LOG_TRIVIAL(info) << "Send message via Prowl";
     

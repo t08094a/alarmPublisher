@@ -97,19 +97,18 @@ string ConfigReader::Get(const string& path) const
     return result;
 }
 
-string ConfigReader::GetTelephonNumbers() const
+vector<string> ConfigReader::GetTelephonNumbers(const string& distributionList)
 {
-    boost::optional<const boost::property_tree::ptree&> recipientNode = pt.get_child_optional("Recipients");
+    // TODO: get telephone numbers based on distributionList. this defines the section in the config
+    vector<string> numbers;
+    
+    auto recipientNode = pt.get_child_optional("Recipients");
     if(recipientNode.is_initialized() == false)
     {
         BOOST_LOG_TRIVIAL(error) << "Unable to read the telephone numbers. The root node is not initialized";
-        return "";
+        
+        return numbers;
     }
-    
-    size_t count = recipientNode.get().size(); // get the child count
-    size_t i = 1; // initialize with 1 to prevent multiple "- 1" statements
-    
-    stringstream ss;
     
     BOOST_LOG_TRIVIAL(info) << "Found the following SMS recipients:";
     
@@ -121,16 +120,9 @@ string ConfigReader::GetTelephonNumbers() const
         string number = kv.second.get_value<string>();
     
         BOOST_LOG_TRIVIAL(info) << name << ": " << number;
-        
-        ss << number;
-        
-        if(i < count)
-        {
-            ss << ";";
-        }
-        
-        i++;
+    
+        numbers.push_back(number);
     }
     
-    return ss.str();
+    return numbers;
 }

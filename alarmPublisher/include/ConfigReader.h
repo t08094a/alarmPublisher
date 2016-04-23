@@ -23,6 +23,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <vector>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ public:
     }
 
     string Get( const string& path ) const;
-    string GetTelephonNumbers() const;
+    vector<string> GetTelephonNumbers(const string& distributionList);
 };
 
 #endif // CONFIGREADER_H

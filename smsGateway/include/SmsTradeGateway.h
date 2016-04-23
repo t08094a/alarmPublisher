@@ -21,9 +21,11 @@
 #ifndef SMSTRADEGATEWAY_H
 #define SMSTRADEGATEWAY_H
 
-#include <map>
 #include "ISmsGateway.h"
 #include "soapSmstradeBindingProxy.h"
+
+#include <map>
+#include <boost/assign.hpp>
 
 using namespace std;
 
@@ -76,15 +78,31 @@ class SmsTradeGateway : public ISmsGateway
 {
 private:
     static const string name;
+
+    map<string, string> responseCode = {
+        {"10", "Empfängernummer ist nicht korrekt"}, 
+        {"20", "Absenderkennung ist nicht korrekt"},
+        {"30", "Nachrichtentext ist nicht korrekt"},
+        {"31", "Messagetyp ist nicht korrekt"},
+        {"40", "SMS Route ist nicht korrekt"},
+        {"50", "Identifikation ist fehlgeschlagen"},
+        {"60", "Nicht genügend Guthaben"},
+        {"70", "Netz wird nicht abgedeckt"},
+        {"71", "Feature nicht möglich"},
+        {"80", "Übergabe an SMS-C fehlgeschlagen"},
+        {"100", "SMS wurde angenommen und versendet"}
+    };
+    
     string key;        // Persönlicher Identifikationscode (String, bis zu 35 Zeichen)
     string route;      // Auswahl der SMS-Route (basic|economy|gold|direct)
     string from;       // Absenderkennung der SMS (String, bis zu 11 Zeichen; Integer, bis zu 16 Zeichen)
     
     void InitializeProxy(SmstradeBindingProxy& server);
     void SetParameter(SmstradeBindingProxy& server, const string& parameterName, const string& value);
-    void SendMessage( const string& to, const string& msg, const map< string, string >& options );
+    void SendMessage(const string& distributionList, const string& msg, const map< string, string >& options );
     void SendMessage(SmstradeBindingProxy& server, const string& to, const string& msg);
     void InitializeFromConfig();
+    string ParseResponseCode(string code);
     
 public:
     SmsTradeGateway();
@@ -93,7 +111,7 @@ public:
     static const string GetGatewayName();
     string GetName() const;
     
-    void SendMessage( const string& to, const string& msg, bool debug = false );
+    void SendMessage( const string& distributionList, const string& msg, bool debug = false );
 };
 
 #endif // SMSTRADEGATEWAY_H

@@ -30,7 +30,7 @@ public:
     
     virtual std::string GetName() const = 0;
     
-    virtual void SendMessage(const std::string& recipients, const std::string& msg, bool debug = false) = 0;
+    virtual void SendMessage(const std::string& distributionList, const std::string& msg, bool debug = false) = 0;
 };
 
 #endif // ISMSGATEWAY_H

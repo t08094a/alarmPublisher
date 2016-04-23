@@ -40,7 +40,7 @@ private:
     GatewayFactory();
     GatewayFactory(const GatewayFactory&);
     
-    GatewayFactory& operator=(const GatewayFactory&);
+    GatewayFactory& operator=(const GatewayFactory&) = delete;
     
     shared_ptr<ISmsGateway> CreateGateway(const string& name);
     void RegisterGateway(const string& gatewayName);
