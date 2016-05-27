@@ -20,7 +20,7 @@ Path=gcc
 Type=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=debug
@@ -80,6 +80,24 @@ Configured from ProjectItem=alarmPublisher,smsGateway,tests,smsGateway_test_SmsT
 Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
 Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
 isExecutable=false
+
+[Launch][Launch Configuration 5]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=Hauptprogramm
+Type=Native Application
+
+[Launch][Launch Configuration 5][Data]
+Arguments=/home/leif/fax000000037.txt
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/alarmPublisher/alarmPublisher
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=alarmPublisher,alarmPublisher,<wrong-target>
+Use External Terminal=false
+Working Directory=
+isExecutable=true
 
 [Project]
 VersionControlSupport=kdevgit

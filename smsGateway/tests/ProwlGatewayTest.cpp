@@ -27,12 +27,9 @@ BOOST_AUTO_TEST_CASE( GetGatewayNameReturnsProwl )
 
 BOOST_AUTO_TEST_CASE( SendMessage )
 {
-    // TODO: Debugmodus aktuell nicht möglich -> es wird immer eine SMS gesandt
-    
-    string to; // is ignored
     string msg = "Hello World";
         
     ProwlGateway gateway;
     
-    gateway.SendMessage(to, msg, true);
+    gateway.SendMessage(msg, true);
 }

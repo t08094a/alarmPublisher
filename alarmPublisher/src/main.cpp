@@ -73,7 +73,7 @@ int main(int argc, char **argv)
         BOOST_LOG_TRIVIAL(info) << "Send message ...";
         
         GatewayManager smsManager;
-        smsManager.SendMessage("Recipients", msg);
+        smsManager.SendMessage(msg);
     }
     catch(exception &e)
     {

@@ -59,7 +59,7 @@ string SmsTradeGateway::GetName() const
     return name;
 }
 
-void SmsTradeGateway::SendMessage(const string& distributionList, const string& msg, bool debug) // to = Empfänger der Nachricht (Integer, bis zu 16 Zeichen)
+void SmsTradeGateway::SendMessage(const string& msg, bool debug) // to = Empfänger der Nachricht (Integer, bis zu 16 Zeichen)
 {
     map<string, string> options;
     
@@ -73,10 +73,10 @@ void SmsTradeGateway::SendMessage(const string& distributionList, const string& 
     options["messagetype"] = "flash"; // Typ der Nachricht: flash, unicode, binary, voice
     options["concat"] = "1";
     
-    SendMessage(distributionList, msg, options);
+    SendMessage(msg, options);
 }
 
-void SmsTradeGateway::SendMessage(const string& distributionList, const string& msg, const map<string, string>& options)
+void SmsTradeGateway::SendMessage(const string& msg, const map< string, string >& options)
 {
     BOOST_LOG_TRIVIAL(info) << "Send message via SmsTrade";
 
@@ -89,15 +89,14 @@ void SmsTradeGateway::SendMessage(const string& distributionList, const string& 
         SetParameter(server, it->first, it->second);
     }
     
-    SendMessage(server, distributionList, msg);
+    SendMessage(server, msg);
         
     server.destroy();
 }
 
-void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& distributionList, const string& msg)
+void SmsTradeGateway::SendMessage(SmstradeBindingProxy& server, const string& msg)
 {
-    // TODO: get telephone numbers based on distributionList. this defines the section in the config
-    vector<string> telephoneNumbers = ConfigReader::GetInstance().GetTelephonNumbers(distributionList);
+    vector<string> telephoneNumbers = ConfigReader::GetInstance().GetTelephoneNumbers();
         
     struct ns1__sendSMSResponse returnData;
     

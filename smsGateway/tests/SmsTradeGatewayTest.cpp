@@ -29,11 +29,10 @@ BOOST_AUTO_TEST_CASE( SendMessage )
 {
     // TODO: Debugmodus aktuell nicht möglich -> es wird immer eine SMS gesandt
     
-    string to = "01749441938";
     string msg = "Hello World";
         
     SmsTradeGateway gateway;
     
-    gateway.SendMessage(to, msg, true);
+    gateway.SendMessage(msg, true);
     
 }

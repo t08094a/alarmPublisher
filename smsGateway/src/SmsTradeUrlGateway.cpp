@@ -64,7 +64,7 @@ string SmsTradeUrlGateway::GetName() const
     return name;
 }
 
-void SmsTradeUrlGateway::SendMessage(const string& distributionList, const string& msg, bool debug)
+void SmsTradeUrlGateway::SendMessage(const string& msg, bool debug)
 {
     BOOST_LOG_TRIVIAL(info) << "Send message via SmsTrade URL";
     
@@ -76,7 +76,7 @@ void SmsTradeUrlGateway::SendMessage(const string& distributionList, const strin
     
     if(curl) 
     {
-        const string notificationUrl = BuildParameter(msg, distributionList, debug);
+        const string notificationUrl = BuildParameter(msg, debug);
         
         curl_easy_setopt(curl, CURLOPT_URL, "http://gateway.smstrade.de");
 
@@ -130,9 +130,9 @@ void SmsTradeUrlGateway::SendMessage(const string& distributionList, const strin
     curl_global_cleanup();
 }
 
-const string SmsTradeUrlGateway::BuildParameter(const string& msg, const string& distributionList, bool debug)
+const string SmsTradeUrlGateway::BuildParameter(const string& msg, bool debug)
 {
-    vector<string> telephoneNumbersList = ConfigReader::GetInstance().GetTelephonNumbers(distributionList);
+    vector<string> telephoneNumbersList = ConfigReader::GetInstance().GetTelephoneNumbers();
     string telephoneNumbers = boost::algorithm::join(telephoneNumbersList, ";");
     
     // url encode inputs

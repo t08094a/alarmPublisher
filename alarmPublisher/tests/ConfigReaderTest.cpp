@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE( GetTelephonNumber )
 {
     string expected = "1111;2222";
     
-    string numbers = ConfigReader::GetInstance().GetTelephonNumbers();
+    string numbers = ConfigReader::GetInstance().GetTelephoneNumbers();
         
     BOOST_CHECK(expected == numbers);
 }

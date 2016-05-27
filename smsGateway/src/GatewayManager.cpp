@@ -46,7 +46,7 @@ const set<string> GatewayManager::GetPossibleGatewayNames() const
     return GatewayFactory::GetInstance().GetAvailableGatewayNames();
 }
     
-void GatewayManager::SendMessage(const string& distributionList, const string& msg)
+void GatewayManager::SendMessage(const string& msg)
 {
     vector<string> gateways;
     string gatewayConfig = ConfigReader::GetInstance().Get("GatewaySelector.Active");
@@ -62,19 +62,19 @@ void GatewayManager::SendMessage(const string& distributionList, const string& m
     
     for(string const& gw : gateways)
     {
-        SendMessage(gw, distributionList, msg);
+        SendMessage(gw, msg);
     }
 }
 
-void GatewayManager::SendMessage(const string& gateway, const string&  distributionList, const string&  msg)
+void GatewayManager::SendMessage(const string& gateway, const string&  msg)
 {
-    BOOST_LOG_TRIVIAL(info) << "Send message to \"" << distributionList << "\" via: " << gateway;
+    BOOST_LOG_TRIVIAL(info) << "Send message via: " << gateway;
     
     ISmsGateway* foundGateway = GatewayFactory::GetInstance().GetGateway(gateway).get();
     
     if(foundGateway != nullptr)
     {
-        foundGateway->SendMessage(distributionList, msg);
+        foundGateway->SendMessage(msg);
     }
     else
     {

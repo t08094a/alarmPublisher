@@ -46,7 +46,7 @@ public:
     static const string GetGatewayName();
     string GetName() const;
     
-    void SendMessage( const string& distributionList, const string& msg, bool debug = false );
+    void SendMessage(const string& msg, bool debug = false );
 };
 
 #endif // PROWLGATEWAY_H

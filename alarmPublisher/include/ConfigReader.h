@@ -21,6 +21,7 @@
 #ifndef CONFIGREADER_H
 #define CONFIGREADER_H
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <vector>
@@ -32,11 +33,13 @@ class ConfigReader : private boost::noncopyable
 {
 private:
     boost::property_tree::ptree pt;
+    string telephoneNumbersFilename;
     
     ConfigReader();
         
     void Initialize();
-    
+    string SearchConfigFile(string filename, bool throwIfMissing);
+    string GetTelephoneColumnNameBasedOnDateTime(const boost::posix_time::ptime& currentTime);
 public:
     ~ConfigReader();
     
@@ -51,7 +54,14 @@ public:
     }
 
     string Get( const string& path ) const;
-    vector<string> GetTelephonNumbers(const string& distributionList);
+    
+    /**
+     * @brief Gets the telephon numbers based on the current datetime from the telephoneNumbersFilename.
+     * 
+     * @return std::vector< std::string, std::allocator< void > >
+     *         The list of telephon numbers.
+     */
+    vector<string> GetTelephoneNumbers();
 };
 
 #endif // CONFIGREADER_H

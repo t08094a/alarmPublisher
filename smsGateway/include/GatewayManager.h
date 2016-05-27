@@ -35,8 +35,8 @@ public:
     
     const set<string> GetPossibleGatewayNames() const;
     
-    void SendMessage( const string& distributionList, const string& msg);
-    void SendMessage( const string& gateway, const string& distributionList, const string& msg );
+    void SendMessage( const string& msg);
+    void SendMessage( const string& gateway, const string& msg );
 };
 
 #endif // GATEWAYMANAGER_H

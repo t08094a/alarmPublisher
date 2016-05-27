@@ -99,8 +99,8 @@ private:
     
     void InitializeProxy(SmstradeBindingProxy& server);
     void SetParameter(SmstradeBindingProxy& server, const string& parameterName, const string& value);
-    void SendMessage(const string& distributionList, const string& msg, const map< string, string >& options );
-    void SendMessage(SmstradeBindingProxy& server, const string& to, const string& msg);
+    void SendMessage(const string& msg, const map< string, string >& options );
+    void SendMessage(SmstradeBindingProxy& server, const string& msg);
     void InitializeFromConfig();
     string ParseResponseCode(string code);
     
@@ -111,7 +111,7 @@ public:
     static const string GetGatewayName();
     string GetName() const;
     
-    void SendMessage( const string& distributionList, const string& msg, bool debug = false );
+    void SendMessage(const string& msg, bool debug = false );
 };
 
 #endif // SMSTRADEGATEWAY_H

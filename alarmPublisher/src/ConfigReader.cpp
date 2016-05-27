@@ -20,13 +20,17 @@
 
 #include "ConfigReader.h"
 
+#define CSV_IO_NO_THREAD // use without threading
+#include "fast-cpp-csv-parser/csv.h"
+
 #include <sstream>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
-ConfigReader::ConfigReader()
+ConfigReader::ConfigReader() : telephoneNumbersFilename()
 {
     BOOST_LOG_TRIVIAL(debug) << "Create ConfigReader";
     
@@ -40,8 +44,24 @@ ConfigReader::~ConfigReader()
 
 void ConfigReader::Initialize()
 {
-    const string filename = "alarmPublisher.config";
+    const string configFilename = "alarmPublisher.config";
+    string resultConfigFilename = SearchConfigFile(configFilename, true);
     
+    try
+    {
+        boost::property_tree::ini_parser::read_ini(resultConfigFilename, pt);
+    }
+    catch(const boost::property_tree::ini_parser_error &e)
+    {
+        BOOST_LOG_TRIVIAL(error) << e.what();
+    }
+    
+    const string telephoneFilename = "telephoneNumbers.csv";
+    this->telephoneNumbersFilename = SearchConfigFile(telephoneFilename, true);
+}
+
+string ConfigReader::SearchConfigFile(string filename, bool throwIfMissing)
+{
     boost::filesystem::path currentPath(boost::filesystem::current_path());
     BOOST_LOG_TRIVIAL(info) << "Search config file \"" << filename << "\" in path " << currentPath;
     
@@ -56,10 +76,20 @@ void ConfigReader::Initialize()
         
         if ( !boost::filesystem::exists( etcFullPath ) )
         {
-            string msg = "The config file \"" + etcFullPath + "\" does not exist -> kill";
-            BOOST_LOG_TRIVIAL(fatal) << msg;
+            string msg = "The config file \"" + etcFullPath + "\" does not exist";
             
-            throw runtime_error(msg);
+            if(throwIfMissing)
+            {
+                msg += " -> kill";
+                
+                BOOST_LOG_TRIVIAL(fatal) << msg;
+                
+                throw runtime_error(msg);
+            }
+            else
+            {
+                BOOST_LOG_TRIVIAL(warning) << msg;
+            }
         }
         else
         {
@@ -71,14 +101,7 @@ void ConfigReader::Initialize()
         resultFilename = filename;
     }
     
-    try
-    {
-        boost::property_tree::ini_parser::read_ini(resultFilename, pt);
-    }
-    catch(const boost::property_tree::ini_parser_error &e)
-    {
-        BOOST_LOG_TRIVIAL(error) << e.what();
-    }
+    return resultFilename;
 }
 
 string ConfigReader::Get(const string& path) const
@@ -97,32 +120,69 @@ string ConfigReader::Get(const string& path) const
     return result;
 }
 
-vector<string> ConfigReader::GetTelephonNumbers(const string& distributionList)
+vector<string> ConfigReader::GetTelephoneNumbers()
 {
-    // TODO: get telephone numbers based on distributionList. this defines the section in the config
     vector<string> numbers;
     
-    auto recipientNode = pt.get_child_optional("Recipients");
-    if(recipientNode.is_initialized() == false)
+    boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+    string daytimeColumnName = GetTelephoneColumnNameBasedOnDateTime(now);
+    
+    BOOST_LOG_TRIVIAL(info) << "Search telephone numbers with 'x' in column: " << daytimeColumnName;
+    
+    using namespace io;
+    CSVReader<3,trim_chars<' ', '\t'>,no_quote_escape<';'>,ignore_overflow,single_and_empty_line_comment<'#'>> in(telephoneNumbersFilename);
+    in.read_header(ignore_extra_column, "Empfänger", "Telefonnummer", daytimeColumnName);
+    
+    string name1;
+    string telNumber;
+    string active;
+    
+    while(in.read_row(name1, telNumber, active))
     {
-        BOOST_LOG_TRIVIAL(error) << "Unable to read the telephone numbers. The root node is not initialized";
+        boost::algorithm::to_lower(active);
         
-        return numbers;
+        if(active != "x")
+        {
+            continue;
+        }
+        
+        BOOST_LOG_TRIVIAL(info) << name1 << ": \t" << telNumber;
+        numbers.push_back(telNumber);
     }
-    
-    BOOST_LOG_TRIVIAL(info) << "Found the following SMS recipients:";
-    
-    for(const pair<string, boost::property_tree::ptree> &kv : recipientNode.get())
-    {
-        // v.first is the name of the child
-        // v.second is the child tree
-        string name = kv.first;
-        string number = kv.second.get_value<string>();
-    
-        BOOST_LOG_TRIVIAL(info) << name << ": " << number;
-    
-        numbers.push_back(number);
-    }
-    
+        
     return numbers;
+}
+
+string ConfigReader::GetTelephoneColumnNameBasedOnDateTime(const boost::posix_time::ptime& currentTime)
+{
+    // "Wochentag Tag", "Wochentag Nacht", "Wochenende Tag", "Wochenende Nacht"
+    // abhängig der aktuellen Uhrzeit, spalte muss ein 'x' enthalten
+    
+    string columnName;
+    
+    short dayOfWeek = currentTime.date().day_of_week().as_number(); // (0==Sunday, 1==Monday, etc)
+
+    if(dayOfWeek == 0 || dayOfWeek == 6)
+    {
+        columnName = "Wochenende";
+    }
+    else
+    {
+        columnName = "Wochentag";
+    }
+    
+    columnName += " ";
+    
+    int currentHour = static_cast<int>(currentTime.time_of_day().hours());
+    
+    if(currentHour >= 7 && currentHour <= 17)
+    {
+        columnName += "Tag";
+    }
+    else
+    {
+        columnName += "Nacht";
+    }
+    
+    return columnName;
 }
