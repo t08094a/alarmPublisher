@@ -53,8 +53,15 @@ Name=faxparser_tests_IlsAnsbach
 Type=Native Application
 
 [Launch][Launch Configuration 2][Data]
+Arguments=
 Configured from ProjectItem=alarmPublisher,faxParser,tests,faxparser_tests_IlsAnsbach
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
 Project Target=alarmPublisher,faxParser,tests,faxparser_tests_IlsAnsbach
+Use External Terminal=false
 Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/faxParser/tests/
 isExecutable=false
 
@@ -88,7 +95,7 @@ Name=Hauptprogramm
 Type=Native Application
 
 [Launch][Launch Configuration 5][Data]
-Arguments=/home/leif/fax000000037.txt
+Arguments=/home/leif/alarm/fax000000037.txt
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
 Dependency Action=Nothing
 EnvironmentGroup=

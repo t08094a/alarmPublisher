@@ -20,6 +20,8 @@
 #ifndef CURRENTSECTION_H
 #define CURRENTSECTION_H
 
+#include <iostream>
+
 enum CurrentSection
 {
     Undefined = 0,
@@ -33,5 +35,23 @@ enum CurrentSection
     // Footer text. Introduced by "ENDE FAX". Can be ignored completely.
     HFooter
 };
+
+inline std::ostream& operator<<(std::ostream& os, const CurrentSection& section )
+{
+   switch( section )
+   {
+      case Undefined: os << "Undefined"; break;
+      case AHeader: os << "Header"; break;
+      case BMitteiler: os << "Mitteiler"; break;
+      case CEinsatzort: os << "Einsatzort"; break;
+      case DZielort: os << "Zielort"; break;
+      case EEinsatzgrund: os << "Einsatzgrund"; break;
+      case FEinsatzmittel: os << "Einsatzmittel"; break;
+      case GBemerkung: os << "Bemerkung"; break;
+      case HFooter: os << "Footer"; break;
+   }
+   
+   return os;
+}
 
 #endif // CURRENTSECTION_H

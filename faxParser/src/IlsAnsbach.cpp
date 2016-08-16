@@ -153,6 +153,37 @@ bool IlsAnsbach::IsSectionBegin(const string& line)
     return false;
 }
 
+string IlsAnsbach::CreateSectionHeaderLine(const string& sectionName)
+{
+	string line = "------------------------------- " + sectionName + " ------------------------------";
+	return line;
+}
+
+
+void IlsAnsbach::InsertSectionHeaderLine(vector<string>& lines, const string& headerLine, CurrentSection toInsertSection, const int index)
+{
+	BOOST_LOG_TRIVIAL(info) << "Try to insert section header: \"" << toInsertSection << "\"";
+	
+	string nextLine = lines.at(index);
+	bool isNextSection = IsSectionBegin(nextLine);
+	
+	if(isNextSection)
+	{
+		CurrentSection nextSection = GetSection(nextLine);
+		
+		if(toInsertSection == nextSection)
+		{
+			BOOST_LOG_TRIVIAL(info) << "The section header to insert is identical to an already existing section header: \"" << toInsertSection << "\"";
+			return;
+		}
+	}
+	
+	BOOST_LOG_TRIVIAL(info) << "Insert section header: \"" << toInsertSection << "\"";
+	
+	
+	lines.insert(lines.begin() + index, headerLine);
+}
+
 void IlsAnsbach::ParseLineWithKeyword(string line, string& prefix, string& value)
 {
     string keyword = "";
@@ -186,6 +217,8 @@ void IlsAnsbach::ParseLineWithKeyword(string line, string& prefix, string& value
 
 void IlsAnsbach::ReadFaxHeader(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read fax header";
+	
     if(lines.size() == 0)
     {
         return;
@@ -225,6 +258,9 @@ void IlsAnsbach::ReadFaxHeader(vector<string>& lines, Operation* operation)
         else if (prefix == "EINSATZNUMMER")
         {
             operation->SetOperationNumber(value);
+			
+			string headerLine = CreateSectionHeaderLine("MITTEILER");
+			InsertSectionHeaderLine(lines, headerLine, BMitteiler, itemsToDelete);
         }
     }
     
@@ -235,8 +271,13 @@ void IlsAnsbach::ReadFaxHeader(vector<string>& lines, Operation* operation)
     }
 }
 
+/**
+ * This section is optional
+ */
 void IlsAnsbach::ReadMitteiler(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read mitteiler";
+	
     if(lines.size() == 0)
     {
         return;
@@ -264,6 +305,9 @@ void IlsAnsbach::ReadMitteiler(vector<string>& lines, Operation* operation)
         if(prefix == "NAME")
         {
             operation->SetMessenger(value);
+			
+			string headerLine = CreateSectionHeaderLine("EINSATZORT");
+			InsertSectionHeaderLine(lines, headerLine, CEinsatzort, itemsToDelete);
         }
     }
     
@@ -276,6 +320,8 @@ void IlsAnsbach::ReadMitteiler(vector<string>& lines, Operation* operation)
 
 void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read einsatzort";
+	
     if(lines.size() == 0)
     {
         return;
@@ -351,6 +397,9 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
         else if (prefix == "STATION")
         {
             operation->SetEinsatzortStation(value);
+			
+			string headerLine = CreateSectionHeaderLine("ZIELORT");
+			InsertSectionHeaderLine(lines, headerLine, DZielort, itemsToDelete);
         }
     }
     
@@ -363,6 +412,8 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
 
 void IlsAnsbach::ReadZielort(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read zielort";
+	
     if(lines.size() == 0)
     {
         return;
@@ -414,6 +465,9 @@ void IlsAnsbach::ReadZielort(vector<string>& lines, Operation* operation)
         else if (prefix == "STATION")
         {
             operation->SetZielortStation(value);
+			
+			string headerLine = CreateSectionHeaderLine("EINSATZGRUND");
+			InsertSectionHeaderLine(lines, headerLine, EEinsatzgrund, itemsToDelete);
         }
     }
     
@@ -426,6 +480,8 @@ void IlsAnsbach::ReadZielort(vector<string>& lines, Operation* operation)
 
 void IlsAnsbach::ReadEinsatzgrund(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read einsatzgrund";
+	
     if(lines.size() == 0)
     {
         return;
@@ -474,6 +530,9 @@ void IlsAnsbach::ReadEinsatzgrund(vector<string>& lines, Operation* operation)
         else if(prefix == "PRIO.")
         {
             operation->SetPriority(value);
+			
+			string headerLine = CreateSectionHeaderLine("EINSATZMITTEL");
+			InsertSectionHeaderLine(lines, headerLine, FEinsatzmittel, itemsToDelete);
         }
     }
     
@@ -486,6 +545,8 @@ void IlsAnsbach::ReadEinsatzgrund(vector<string>& lines, Operation* operation)
 
 void IlsAnsbach::ReadEinsatzmittel(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read einsatzmittel";
+	
     if(lines.size() == 0)
     {
         return;
@@ -550,6 +611,11 @@ void IlsAnsbach::ReadEinsatzmittel(vector<string>& lines, Operation* operation)
                 operationResource = nullptr;
             }
         }
+        else
+		{
+			string headerLine = CreateSectionHeaderLine("BEMERKUNG");
+			InsertSectionHeaderLine(lines, headerLine, GBemerkung, itemsToDelete);
+		}
     }
     
     if(itemsToDelete > 0)
@@ -561,6 +627,8 @@ void IlsAnsbach::ReadEinsatzmittel(vector<string>& lines, Operation* operation)
 
 void IlsAnsbach::ReadBemerkung(vector<string>& lines, Operation* operation)
 {
+	BOOST_LOG_TRIVIAL(info) << "Read bemerkung";
+	
     if(lines.size() == 0)
     {
         return;
@@ -593,3 +661,5 @@ void IlsAnsbach::ReadBemerkung(vector<string>& lines, Operation* operation)
     boost::trim(comment);
     operation->SetComment(comment);
 }
+
+

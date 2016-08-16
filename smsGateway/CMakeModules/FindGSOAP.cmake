@@ -70,7 +70,7 @@ find_program(GSOAP_SOAPCPP2
 # try to determine the flagfor the 2.7.6 compatiblity, break with 2.7.13 and re-break with 2.7.16
 # ----------------------------------------------------
 
-execute_process(COMMAND ${GSOAP_SOAPCPP2}  "-v"   OUTPUT_VARIABLE GSOAP_STRING_VERSION ERROR_VARIABLE GSOAP_STRING_VERSION )
+execute_process(COMMAND ${GSOAP_SOAPCPP2}  "-h"   OUTPUT_VARIABLE GSOAP_STRING_VERSION ERROR_VARIABLE GSOAP_STRING_VERSION )
 string(REGEX MATCH "[0-9]*\\.[0-9]*\\.[0-9]*" GSOAP_VERSION ${GSOAP_STRING_VERSION})
 # -----------------------------------------------------
 # GSOAP_276_COMPAT_FLAGS and GSOAPVERSION

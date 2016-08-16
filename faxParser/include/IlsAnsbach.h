@@ -66,6 +66,8 @@ public:
 private:
     CurrentSection GetSection(const string& line);
     bool IsSectionBegin(const string& line);
+	string CreateSectionHeaderLine(const string& sectionName);
+	void InsertSectionHeaderLine(vector<string>& lines, const string& headerLine, CurrentSection toInsertSection, const int index);
     void ParseLineWithKeyword(string line, string& prefix, string& value);
         
     void ReadFaxHeader(vector<string>& lines, Operation* operation);
