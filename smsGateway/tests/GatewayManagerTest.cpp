@@ -3,7 +3,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "GatewayManager.h"
-#include "SmsTradeGateway.h"
+#include "CmGateway.h"
 #include "ProwlGateway.h"
 
 #include <set>
@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE( GetNamesReturnsSmsTradeAndProwl )
     
     BOOST_CHECK(2 == names.size());
     
-    BOOST_CHECK(names.end() != names.find(SmsTradeGateway::GetGatewayName()));
+    BOOST_CHECK(names.end() != names.find(CmGateway::GetGatewayName()));
     BOOST_CHECK(names.end() != names.find(ProwlGateway::GetGatewayName()));
 }
 

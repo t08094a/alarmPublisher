@@ -20,8 +20,7 @@
 
 #include "GatewayFactory.h"
 #include "ProwlGateway.h"
-#include "SmsTradeGateway.h"
-#include "SmsTradeUrlGateway.h"
+#include "CmGateway.h"
 
 #include <exception>
 
@@ -31,8 +30,7 @@ GatewayFactory::GatewayFactory()
 {
     BOOST_LOG_TRIVIAL(info) << "Create GatewayFactory";
     
-    RegisterGateway(SmsTradeGateway::GetGatewayName());
-    RegisterGateway(SmsTradeUrlGateway::GetGatewayName());
+    RegisterGateway(CmGateway::GetGatewayName());
     RegisterGateway(ProwlGateway::GetGatewayName());
 }
 
@@ -60,13 +58,9 @@ shared_ptr<ISmsGateway> GatewayFactory::CreateGateway(const string& name)
     
     if(availableGatewayNames.find(name) != availableGatewayNames.end())
     {
-        if(name == SmsTradeGateway::GetGatewayName())
+        if(name == CmGateway::GetGatewayName())
         {
-            gw = new SmsTradeGateway();
-        }
-        else if(name == SmsTradeUrlGateway::GetGatewayName())
-        {
-            gw = new SmsTradeUrlGateway();
+            gw = new CmGateway();
         }
         else if (name == ProwlGateway::GetGatewayName())
         {

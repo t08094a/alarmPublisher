@@ -53,7 +53,7 @@ void GatewayManager::SendMessage(const string& msg)
     
     if(gatewayConfig.find(";"))
     {
-        boost::algorithm::split(gateways, gatewayConfig, boost::is_any_of(",;"), boost::algorithm::token_compress_on);                
+        boost::algorithm::split(gateways, gatewayConfig, boost::is_any_of(",;"), boost::algorithm::token_compress_on);
     }
     else
     {

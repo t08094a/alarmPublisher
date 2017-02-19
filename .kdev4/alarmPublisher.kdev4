@@ -79,12 +79,19 @@ isExecutable=false
 [Launch][Launch Configuration 4]
 Configured Launch Modes=debug
 Configured Launchers=gdb
-Name=smsGateway_test_SmsTradeGateway
+Name=smsGateway_test_CmGateway
 Type=Native Application
 
 [Launch][Launch Configuration 4][Data]
+Arguments=
 Configured from ProjectItem=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
-Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_SmsTradeGateway
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=alarmPublisher,smsGateway,tests,smsGateway_test_CmGateway
+Use External Terminal=false
 Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/smsGateway/tests/
 isExecutable=false
 

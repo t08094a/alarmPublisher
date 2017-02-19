@@ -61,7 +61,7 @@ public:
      * @return std::vector< std::string, std::allocator< void > >
      *         The list of telephon numbers.
      */
-    vector<string> GetTelephoneNumbers();
+    vector<string> GetTelephoneNumbers(bool formatInternational = false);
 };
 
 #endif // CONFIGREADER_H

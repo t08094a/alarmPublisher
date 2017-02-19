@@ -120,7 +120,7 @@ string ConfigReader::Get(const string& path) const
     return result;
 }
 
-vector<string> ConfigReader::GetTelephoneNumbers()
+vector<string> ConfigReader::GetTelephoneNumbers(bool formatInternational)
 {
     vector<string> numbers;
     
@@ -146,7 +146,23 @@ vector<string> ConfigReader::GetTelephoneNumbers()
             continue;
         }
         
-        BOOST_LOG_TRIVIAL(info) << name1 << ": \t" << telNumber;
+
+
+        if(formatInternational)
+        {
+            // remove leading 0 and replace with 0049 for germany
+            if(telNumber.size() > 0 && telNumber.at(0) == '0')
+            {
+                telNumber = "0049" + telNumber.substr(1, string::npos);
+            }
+
+            BOOST_LOG_TRIVIAL(info) << name1 << " (formatted):\t" << telNumber;
+        }
+        else
+        {
+            BOOST_LOG_TRIVIAL(info) << name1 << ":\t" << telNumber;
+        }
+
         numbers.push_back(telNumber);
     }
         

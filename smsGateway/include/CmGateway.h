@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2016  Jochen Fähnlein <jochen.faehnlein@ff-ipsheim.de>
+ * Copyright (C) 2017  <copyright holder> <email>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,37 @@
  *
  */
 
-#ifndef SMSTRADEURLGATEWAY_H
-#define SMSTRADEURLGATEWAY_H
+#ifndef CMGATEWAY_H
+#define CMGATEWAY_H
 
-#include <map>
 #include "ISmsGateway.h"
+
+#include <vector>
 
 using namespace std;
 
-class SmsTradeUrlGateway : public ISmsGateway
+class CmGateway : public ISmsGateway
 {
 private:
     static const string name;
-    string url;
-    string key;        // Persönlicher Identifikationscode (String, bis zu 35 Zeichen)
-    string route;      // Auswahl der SMS-Route (basic|economy|gold|direct)
-    string from;       // Absenderkennung der SMS (String, bis zu 11 Zeichen; Integer, bis zu 16 Zeichen)
     
-    const string BuildParameter(const string& msg, bool debug);
+    string productToken; // = Guid, Persönlicher Identifikationscode
+    string from;         // Absenderkennung der SMS (String, bis zu 11 Zeichen; Integer, bis zu 16 Zeichen)
+
     void InitializeFromConfig();
-    
+
+    string CreateMessage(const string& msg, vector<string>& telephoneNumbers);
+
 public:
-    SmsTradeUrlGateway();
-    SmsTradeUrlGateway(const SmsTradeUrlGateway& other);
-    ~SmsTradeUrlGateway();
-    
+    CmGateway();
+    CmGateway ( const CmGateway& other );
+    ~CmGateway();
+    CmGateway& operator= ( const CmGateway& other );
+
     static const string GetGatewayName();
     string GetName() const;
-    
+
     void SendMessage(const string& msg, bool debug = false );
-    
-    SmsTradeUrlGateway& operator=(const SmsTradeUrlGateway& other);
 };
 
-#endif // SMSTRADEURLGATEWAY_H
+#endif // CMGATEWAY_H
