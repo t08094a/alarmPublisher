@@ -2,7 +2,7 @@
 
 
 #include <boost/test/unit_test.hpp>
-#include "cmgateway.h"
+#include "CmGateway.h"
 
 using namespace boost::unit_test;
 using namespace std;

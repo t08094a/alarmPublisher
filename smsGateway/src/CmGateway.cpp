@@ -18,7 +18,7 @@
  *
  */
 
-#include "cmgateway.h"
+#include "CmGateway.h"
 #include "ConfigReader.h"
 #include "UrlEncoding.h"
 
