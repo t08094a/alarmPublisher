@@ -5,11 +5,11 @@ Active = cm;Prowl
 LogOutput = /tmp/alarmPublisher/
 
 [cm]
-ProductToken = 1cf66c53-b3f2-417c-b36a-280354b3b866
+ProductToken = 564ca6e1-43f6-b303-15c8-932a334c3310
 From = FF Alarm
 
 [Prowl]
-ApiKey = 4568478646a63e54646f653
+ApiKey = 567768a5e314553c53da112
 Url = https://prowl.weks.net/publicapi/add
 Application = FF Alarm
 Event = Alarm
