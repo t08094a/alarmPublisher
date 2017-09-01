@@ -44,9 +44,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
 # Load settings for the external project "Boost".
-# The components "system" and "filesystem" from "Boost" version 1.55.0 or
+# The components "system" and "filesystem" from "Boost" version 1.58.0 or
 # greater are required.
-find_package( Boost 1.55.0 REQUIRED COMPONENTS system thread log regex date_time )
+find_package( Boost 1.58.0 REQUIRED COMPONENTS system thread log regex date_time )
 if (Boost_FOUND)
     # From the offical documentation:
     # Add include directories to the build. [...] If the SYSTEM option is given,
