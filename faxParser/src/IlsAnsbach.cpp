@@ -21,6 +21,7 @@
 #include "OperationKeywords.h"
 #include "OperationResource.h"
 #include "ParserUtility.h"
+#include "GaussKruegerCoordinate.h"
 
 #include <algorithm>
 #include <fstream>
@@ -400,6 +401,16 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
 			
 			string headerLine = CreateSectionHeaderLine("ZIELORT");
 			InsertSectionHeaderLine(lines, headerLine, DZielort, itemsToDelete);
+        }
+        else if (prefix == "KOORDINATE")
+        {
+            GaussKruegerCoordinate coordinate = ParserUtility::ReadCoordinate(value);
+            
+            if(! coordinate.IsEmpty())
+            {
+                einsatzort.SetGeoLatitude(coordinate.GetX());
+                einsatzort.SetGeoLongitude(coordinate.GetY());
+            }
         }
     }
     

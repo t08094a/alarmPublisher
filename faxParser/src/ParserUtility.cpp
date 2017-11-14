@@ -316,6 +316,31 @@ void ParserUtility::AnalyzeStreetLine(const string& line, string& street, string
     }
 }
 
+GaussKruegerCoordinate ParserUtility::ReadCoordinate(const string& value)
+{
+    string x = "0";
+    string y = "0";
+    
+    const boost::regex expr("[xX]:\\s+(\\d+(?:\\.\\d+)?)\\s+[yY]:\\s+(\\d+(?:\\.\\d+)?)");
+    
+    boost::smatch what;
+    bool matches = boost::regex_search(value, what, expr);
+    
+    if(matches)
+    {
+        x = string(what[1].first, what[1].second);
+        y = string(what[2].first, what[2].second);
+        
+        BOOST_LOG_TRIVIAL(debug) << "Parsed coordinates from " << value << " to x:" << x << "; y: " << y << "";
+    }
+    else
+    {
+        BOOST_LOG_TRIVIAL(warning) << "Unable to parse value " << value << " to coordinates!";
+    }
+    
+    return GaussKruegerCoordinate(x, y);
+}
+
 bool ParserUtility::IsHighway(const string& line)
 {
     // contains line a value with "Autobahn", "Bundesstraße" or "Staatsstraße", e.g. A7, B470, ST2252

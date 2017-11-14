@@ -36,7 +36,7 @@ class IlsAnsbach : public IParser
 {
 private:
     vector<string> definedKeywords = {"ABSENDER", "FAX", "TERMIN", "EINSATZNUMMER", "NAME", "STRAßE", "ORT", "OBJEKT", "PLANNUMMER",
-                                      "STATION", "STRAßE", "ORT", "OBJEKT", "STATION", "SCHLAGW", "STICHWORT", "PRIO",
+                                      "STATION", "KOORDINATE", "STRAßE", "ORT", "OBJEKT", "STATION", "SCHLAGW", "STICHWORT", "PRIO",
                                       "EINSATZMITTEL", "ALARMIERT", "GEFORDERTE AUSSTATTUNG"};
     vector<string> sectionNames = {"MITTEILER","EINSATZORT","ZIELORT","EINSATZGRUND", "EINSATZMITTEL", "BEMERKUNG", "ENDE FAX"};
     map<string, CurrentSection> sectionResolver = { 

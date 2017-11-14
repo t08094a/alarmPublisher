@@ -20,7 +20,7 @@ Path=gcc
 Type=GCC
 
 [Launch]
-Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2,Launch Configuration 3,Launch Configuration 4,Launch Configuration 5,Launch Configuration 6
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=debug
@@ -112,6 +112,18 @@ Project Target=alarmPublisher,alarmPublisher,<wrong-target>
 Use External Terminal=false
 Working Directory=
 isExecutable=true
+
+[Launch][Launch Configuration 6]
+Configured Launch Modes=debug
+Configured Launchers=lldb
+Name=faxparser_tests_ParserUtility
+Type=Native Application
+
+[Launch][Launch Configuration 6][Data]
+Configured from ProjectItem=alarmPublisher,faxParser,tests,faxparser_tests_ParserUtility
+Project Target=alarmPublisher,faxParser,tests,faxparser_tests_ParserUtility
+Working Directory=file:///home/leif/Downloads/repositories_co/ffw/alarmPublisher/build/faxParser/tests/
+isExecutable=false
 
 [Project]
 VersionControlSupport=kdevgit
