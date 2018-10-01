@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 project(root)
 
@@ -9,6 +9,25 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/CMakeModul
 #     set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/installed" CACHE PATH "default install path" FORCE )
 #     message(STATUS "Install prefix (overriden): ${CMAKE_INSTALL_PREFIX}")
 # endif()
+
+include(ExternalProject)
+set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
+ExternalProject_Add(restclient-cpp
+    PREFIX external
+    GIT_REPOSITORY https://github.com/mrtazz/restclient-cpp.git
+    GIT_SHALLOW 1
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ./autogen.sh COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/external
+    BUILD_COMMAND make
+    INSTALL_COMMAND make install
+    LOG_CONFIGURE 1
+    LOG_BUILD 1
+    LOG_INSTALL 1
+)
+
+
+include_directories(${EXTERNAL_INSTALL_LOCATION}/include)
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
 
 set(CMAKE_BUILD_TYPE Debug)
 message( STATUS "CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}" )

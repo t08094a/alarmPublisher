@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 # Set options for this project
 set(PROJECT_NAME "alarmPublisher" CXX)
@@ -63,6 +63,8 @@ add_executable(${PROJECT_NAME} ${SRC_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES 
                       VERSION ${PROJECT_VER}
                       SOVERSION ${PROJECT_APIVER})
+
+add_dependencies(${PROJECT_NAME} restclient-cpp)
 
 # Define the libraries this project depends upon
 target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway)

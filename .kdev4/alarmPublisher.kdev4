@@ -13,6 +13,7 @@ CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
 Install Directory=file:///usr/local
+Runtime=Host System
 
 [Defines And Includes][Compiler]
 Name=GCC
@@ -130,3 +131,11 @@ VersionControlSupport=kdevgit
 
 [SourceFileTemplates]
 LastUsedTemplate=/home/leif/.kde/share/apps/kdevfiletemplates/template_descriptions/cpp_basic.desktop
+
+[SourceFormatter]
+text/x-c++hdr=kdevastyle||1TBS
+text/x-c++src=kdevastyle||1TBS
+text/x-chdr=kdevastyle||1TBS
+text/x-csharp=kdevastyle||1TBS
+text/x-csrc=kdevastyle||1TBS
+text/x-java=kdevastyle||1TBS

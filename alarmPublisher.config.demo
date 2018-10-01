@@ -14,3 +14,7 @@ Url = https://prowl.weks.net/publicapi/add
 Application = FF Alarm
 Event = Alarm
 Priority = 2
+
+[AlarmMonitor]
+endpoint = http://alarmmonitor-display.local
+api = /api/v1/alarminfo
