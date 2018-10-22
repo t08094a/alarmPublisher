@@ -34,6 +34,14 @@ public:
     * @param _y The y value
     */
     GaussKruegerCoordinate(const string& _x, const string& _y);
+    
+    /**
+    * @brief Initializes a new instance
+    * 
+    * @param _x The x value
+    * @param _y The y value
+    */
+    GaussKruegerCoordinate(const double _x, const double _y);
 
     /**
     * @brief The copy constructor.
@@ -65,18 +73,18 @@ public:
     bool operator==(const GaussKruegerCoordinate& other) const;
     
     /**
-    * @brief Gets the X coordinate.
+    * @brief Gets the X coordinate in Gauß Krüger format.
     * 
-    * @return string
+    * @return double
     */
-    string GetX();
+    double GetX();
     
     /**
-    * @brief Gets the Y coordinate.
+    * @brief Gets the Y coordinate in Gauß Krüger format.
     * 
-    * @return string
+    * @return double
     */
-    string GetY();
+    double GetY();
     
     /**
     * @brief Gets a value whether x and y are both 0.
@@ -86,8 +94,8 @@ public:
     bool IsEmpty();
     
 private:
-    string x;
-    string y;
+    double x;
+    double y;
     
     template<typename T> bool IsValid(const string& num);
 };

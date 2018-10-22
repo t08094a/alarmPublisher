@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/CMakeModules/")
+
 # Set options for this project
 set(PROJECT_NAME "alarmPublisher" CXX)
 project(${PROJECT_NAME})
+
+add_definitions(-std=c++11)
 
 message(STATUS "============================")
 message(STATUS "Project: ${PROJECT_NAME}")
 message(STATUS "============================")
 
 SET(PROJECT_VER_MAJOR 1)
-SET(PROJECT_VER_MINOR 0)
+SET(PROJECT_VER_MINOR 1)
 SET(PROJECT_VER_PATCH 0)
 SET(PROJECT_VER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}.${PROJECT_VER_PATCH}")
 SET(PROJECT_APIVER "${PROJECT_VER_MAJOR}.${PROJECT_VER_MINOR}")
@@ -19,6 +23,13 @@ set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
 include_directories (${PROJECT_SOURCE_DECLARATION_DIRECTORY})
 include_directories(tests)
+
+add_subdirectory(tests)
+
+# Define headers for this library. PUBLIC headers are used for
+# compiling the library, and will be added to consumers' build
+# paths.
+#target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
@@ -34,7 +45,8 @@ if (Boost_FOUND)
     # such as the compiler skipping warnings [...])."
     include_directories (SYSTEM ${Boost_INCLUDE_DIR})
 
-    message(STATUS "Boost libs: ${Boost_LIBRARIES}")
+    message(STATUS "The Boost include directory: ${Boost_INCLUDE_DIR}")
+    message(STATUS "The Boost libraries: ${Boost_LIBRARIES})")
     
     # From the offical documentation:
     # "Specify directories in which the linker will look for libraries. [...] Note
@@ -48,14 +60,21 @@ endif ()
 
 # find all source files in ./src/
 aux_source_directory(src SRC_FILES)
-# aux_source_directory(include HEADER_FILES)
+aux_source_directory(include HEADER_FILES)
 
 message(STATUS "Source files: ${SRC_FILES}")
 
 #add_subdirectory(tests)
 
-# Add faxparser to #include search path
-include_directories(${faxparser_SOURCE_DIR})
+# Add dependencies to include and lib for faxparser and external projects
+include_directories(${faxparser_SOURCE_DIR} ${EXTERNAL_INSTALL_LOCATION}/include)
+link_directories(${EXTERNAL_INSTALL_LOCATION}/lib)
+
+include_directories(tests)
+
+# get restclient-cpp *.o file
+set(RESTCLIENTCPP ${EXTERNAL_INSTALL_LOCATION}/lib/librestclient-cpp.a)
+
 
 # Define an executable
 add_executable(${PROJECT_NAME} ${SRC_FILES}) 
@@ -67,6 +86,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 add_dependencies(${PROJECT_NAME} restclient-cpp)
 
 # Define the libraries this project depends upon
-target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway)
+target_link_libraries (${PROJECT_NAME} ${Boost_LIBRARIES} faxparser smsGateway ${RESTCLIENTCPP})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION alarmPublisher)
+

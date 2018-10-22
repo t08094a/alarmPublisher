@@ -65,3 +65,7 @@ add_test(NAME OperationResource COMMAND ${PROJECT_NAME}_OperationResource)
 add_executable(${PROJECT_NAME}_IlsAnsbach TestRunner.cpp IlsAnsbachTest.cpp) 
 target_link_libraries(${PROJECT_NAME}_IlsAnsbach PRIVATE faxparser ${Boost_LIBRARIES})
 add_test(NAME IlsAnsbach COMMAND ${PROJECT_NAME}_IlsAnsbach)
+
+add_executable(${PROJECT_NAME}_GaussKrueger TestRunner.cpp GaussKruegerCoordinateTest.cpp) 
+target_link_libraries(${PROJECT_NAME}_GaussKrueger PRIVATE faxparser ${Boost_LIBRARIES})
+add_test(NAME GaussKrueger COMMAND ${PROJECT_NAME}_GaussKrueger)

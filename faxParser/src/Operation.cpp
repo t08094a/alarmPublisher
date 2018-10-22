@@ -235,6 +235,16 @@ void Operation::SetEinsatzortStation(const string station)
     einsatzortStation = station;
 }
 
+double Operation::GetEinsatzortLatitude()
+{
+    return einsatzort.GetGeoLatitude();
+}
+
+double Operation::GetEinsatzortLongitude()
+{
+    return einsatzort.GetGeoLongitude();
+}
+
 string Operation::GetZielortZusatz()
 {
     return zielortZusatz;

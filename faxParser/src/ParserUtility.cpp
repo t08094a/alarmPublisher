@@ -205,7 +205,7 @@ void ParserUtility::AnalyzeStreetLine(const string& line, string& street, string
 
     // initialize the output
     street = "";
-    streetNumber = "1";
+    streetNumber = "";
     appendix = "";
 
     boost::regex streetRegex("Straße\\s*:\\s*");

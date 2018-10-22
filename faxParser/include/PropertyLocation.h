@@ -36,8 +36,8 @@ private:
     string street;
     string streetNumber;
     string intersection;
-    string geoLatitude;
-    string geoLongitude;
+    double geoLatitude;
+    double geoLongitude;
     string property;
     
 public:
@@ -122,28 +122,28 @@ public:
     void SetIntersection(const string intersection);
 
     /**
-     * @brief Gets the latitude of the location (if provided by alarmsource).
+     * @brief Gets the latitude of the location (if provided by alarmsource) in WGS84 format.
      * @return
      */
-    string GetGeoLatitude() const;
+    double GetGeoLatitude() const;
 
     /**
-     * @brief Sets the latitude of the location (if provided by alarmsource).
+     * @brief Sets the latitude of the location (if provided by alarmsource) in WGS84 format.
      * @param latitude
      */
-    void SetGeoLatitude(const string latitude);
+    void SetGeoLatitude(const double latitude);
 
     /**
-     * @brief Gets the longitude of the location (if provided by alarmsource).
+     * @brief Gets the longitude of the location (if provided by alarmsource) in WGS84 format.
      * @return
      */
-    string GetGeoLongitude() const;
+    double GetGeoLongitude() const;
 
     /**
-     * @brief Sets the longitude of the location (if provided by alarmsource).
+     * @brief Sets the longitude of the location (if provided by alarmsource) in WGS84 format.
      * @param longitude
      */
-    void SetGeoLongitude(const string longitude);
+    void SetGeoLongitude(const double longitude);
 
     /**
      * @brief Gets the name of the property (company, site, house etc.).

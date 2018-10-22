@@ -68,16 +68,16 @@ public:
     virtual string GetIntersection() const = 0;
     
     /**
-     * @brief Gets the latitude of the location (if provided by alarmsource).
+     * @brief Gets the latitude of the location (if provided by alarmsource) in WGS84 format.
      * @return
      */
-    virtual string GetGeoLatitude() const = 0;
+    virtual double GetGeoLatitude() const = 0;
     
     /**
-     * @brief Gets the longitude of the location (if provided by alarmsource).
+     * @brief Gets the longitude of the location (if provided by alarmsource) in WGS84 format.
      * @return
      */
-    virtual string GetGeoLongitude() const = 0;
+    virtual double GetGeoLongitude() const = 0;
     
     /**
      * @brief Gets the name of the property (company, site, house etc.).

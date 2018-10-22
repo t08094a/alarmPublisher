@@ -18,11 +18,12 @@
  */
 
 #include "PropertyLocation.h"
+#include <cmath>
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 
-PropertyLocation::PropertyLocation()
+PropertyLocation::PropertyLocation() : location(), zipCode(), city(), street(), streetNumber(), intersection(), geoLatitude(-1), geoLongitude(-1), property()
 {
     // nop
 }
@@ -70,8 +71,8 @@ PropertyLocation& PropertyLocation::operator= (const PropertyLocation& other)
 bool PropertyLocation::operator== (const PropertyLocation& other) const
 {
     return this->city == other.city &&
-           this->geoLatitude == other.geoLatitude &&
-           this->geoLongitude == other.geoLongitude &&
+           std::fabs(this->geoLatitude - other.geoLatitude) < 1 &&
+           std::fabs(this->geoLongitude - other.geoLongitude) < 1 &&
            this->intersection == other.intersection &&
            this->location == other.location &&
            this->property == other.property &&
@@ -151,26 +152,24 @@ void PropertyLocation::SetIntersection(const string intersection)
     boost::trim(this->intersection);
 }
 
-string PropertyLocation::GetGeoLatitude() const
+double PropertyLocation::GetGeoLatitude() const
 {
     return geoLatitude;
 }
 
-void PropertyLocation::SetGeoLatitude(const string latitude)
+void PropertyLocation::SetGeoLatitude(const double latitude)
 {
     this->geoLatitude = latitude;
-    boost::trim(this->geoLatitude);
 }
 
-string PropertyLocation::GetGeoLongitude() const
+double PropertyLocation::GetGeoLongitude() const
 {
     return geoLongitude;
 }
 
-void PropertyLocation::SetGeoLongitude(const string longitude)
+void PropertyLocation::SetGeoLongitude(const double longitude)
 {
     this->geoLongitude = longitude;
-    boost::trim(this->geoLongitude);
 }
 
 string PropertyLocation::GetProperty() const
@@ -191,7 +190,7 @@ bool PropertyLocation::IsMeaningful() const
 
 bool PropertyLocation::HasGeoCoordinates() const
 {
-    return geoLatitude.empty() == false || geoLongitude.empty() == false;
+    return geoLatitude > 0 && geoLongitude > 0;
 }
 
 string PropertyLocation::ToString() const

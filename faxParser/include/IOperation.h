@@ -79,6 +79,10 @@ public:
     
     virtual std::string GetEinsatzortStation() = 0;
     
+    virtual double GetEinsatzortLatitude() = 0;
+    
+    virtual double GetEinsatzortLongitude() = 0;
+    
     virtual ILocation& GetZielort() = 0;
     
     virtual std::string GetZielortZusatz() = 0;

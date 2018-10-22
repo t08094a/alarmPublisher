@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/CMakeModul
 #     message(STATUS "Install prefix (overriden): ${CMAKE_INSTALL_PREFIX}")
 # endif()
 
+# include restclient-cpp as external project and build it
 include(ExternalProject)
 set(EXTERNAL_INSTALL_LOCATION ${CMAKE_BINARY_DIR}/external)
 ExternalProject_Add(restclient-cpp

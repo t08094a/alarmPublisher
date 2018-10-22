@@ -1,0 +1,67 @@
+ 
+
+EM n.s ensbac Booms (esii asoso-no ämo(eszuaiwwes ein e es.os.eois äci4=s7 E
+---------------------- -- Alarmfax der ILS Ansbach ------------------------
+
+Absender : ILS ANSBACH
+Fax : +49 (981) 65050-410 Rufnummer: +49 (981) 9776240
+Termin .
+
+Einsatznummer: T 5.1 160308  275
+
+---------------------------- -- EINSATZORT ------------------------------
+Straße : Mailheim    Haus-Nr.: 
+
+Ort : 91472 Mailheim - Ipsheim Ipsheim
+
+Objekt : 
+
+Plannummer:
+
+Station
+
+---------------------------- -- ZIELORT ---------------------------------
+Straße : Haus-Nr.:
+
+Ort :
+
+Objekt
+
+Station
+
+---------------------------- -- EINSATZGRUND ----------------------------
+
+Schlagw.: VU mit PKW (bei Austritt von Betriebsstoffen) !!!
+Stichwort B:
+
+Stichwort R:
+
+Stichwort S:
+
+Stichwort T: VU 1
+
+Prio. : 1
+
+(1 = Notfall / 2 = dringend / 3 = nicht zeitkritisch)
+---------------------------- -- EINSATZMITTEL ----------------------------
+Einsatzmittel : 5.1.3 NEA FF Ipsheim
+Alarmiert : 08.03.2016 07:24
+Geforderte Ausstattung : 
+Einsatzmittel : 5.1.3 FL IPS 42/1
+Alarmiert : 08.03.2016 07:24
+Geforderte Ausstattung : Gruppe (Takt. Einheit, Dispo)
+Einsatzmittel : 5.1.3 Infoalarm FW-Führung NEA
+Alarmiert : 08.03.2016 07:24
+Geforderte Ausstattung : 
+
+---------------------------- -- BEMERKUNG -------------------------------
+
+3 PKW
+
+---------------------------- -- ENDE FAX -------------------------------
+
+Zur Übernahme eines Einsatzes Kontakt mit der ILS aufnehmen!
+
+Das Alarmfax darf nur zum internen Dienstgebrauch verwendet werden.
+Der Empfänger hat sicherzustellen, dass unbefugte bzw. nicht beteiligte
+Dritte keinen Zugang zu den übermittelten Daten haben - ILS Ansbach -

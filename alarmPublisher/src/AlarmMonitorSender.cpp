@@ -20,7 +20,10 @@
 
 #include "AlarmMonitorSender.h"
 #include "ConfigReader.h"
+#include "ILocation.h"
+#include "IKeywords.h"
 #include "restclient-cpp/restclient.h"
+#include "restclient-cpp/connection.h"
 
 AlarmMonitorSender::AlarmMonitorSender() : endpoint(), api(), initialized(false)
 {
@@ -31,6 +34,8 @@ AlarmMonitorSender::AlarmMonitorSender() : endpoint(), api(), initialized(false)
 
 AlarmMonitorSender::~AlarmMonitorSender()
 {
+    BOOST_LOG_TRIVIAL(info) << "disable REST client ...";
+    RestClient::disable();
 }
 
 void AlarmMonitorSender::Initialize()
@@ -44,11 +49,13 @@ void AlarmMonitorSender::Initialize()
     BOOST_LOG_TRIVIAL(info) << "use endpoint: " << endpoint;
     BOOST_LOG_TRIVIAL(info) << "use api: " << api;
     
+    BOOST_LOG_TRIVIAL(info) << "initialize REST client ...";
+    RestClient::init();
     
     initialized = true;
 }
 
-void AlarmMonitorSender::Send(IOperation& operation) const
+void AlarmMonitorSender::Send(IOperation* operation)
 {
     if(!initialized)
     {
@@ -60,25 +67,179 @@ void AlarmMonitorSender::Send(IOperation& operation) const
     
     
     string url = endpoint + api;
+    const string contentType = "application/json";
+    string data = GetDataAsJson(operation);
     
-    string data = GetDataAsJson();
-    
-    RestClient::Response r = RestClient::post(url, "application/json", data);
-    
-    BOOST_LOG_TRIVIAL(info) << "REST response:" << endl << r.body;
+    RestClient::Response response = RestClient::post(url, contentType, data);
+
+    if(response.code == 201)
+    {
+        BOOST_LOG_TRIVIAL(info) << "Successfully send REST request";
+    }
+    else
+    {
+        BOOST_LOG_TRIVIAL(error) << "REST response:" << endl << response.body;
+    }
 }
 
-string AlarmMonitorSender::GetDataAsJson() const
+string AlarmMonitorSender::GetDataAsJson(IOperation* operation)
 {
-    stringstream ss;
+    ILocation& location = operation->GetEinsatzort();
+    IKeywords& keywords =  operation->GetKeywords();
 
+    stringstream ss;
     ss << "{" << endl;
-    ss << "  \"foo\": \"bla\"" << endl;
+    ss << "  \"time\": \"" << FormatDateTimeForJson(operation->GetTimestamp()) << "\"," << endl;
+    ss << "  \"comment\": \"" << operation->GetComment() << "\"," << endl;
+    ss << "  \"keywords\": {" << endl;
+    ss << "    \"keyword\": \"" << keywords.GetKeyword() << "\"," << endl;
+    ss << "    \"emergencyKeyword\": \"" << keywords.GetEmergencyKeyword() << "\"," << endl;
+    ss << "    \"b\": \"" << keywords.GetB() << "\"," << endl;
+    ss << "    \"r\": \"" << keywords.GetR() << "\"," << endl;
+    ss << "    \"s\": \"" << keywords.GetS() << "\"," << endl;
+    ss << "    \"t\": \"" << keywords.GetT() << "\"" << endl;
+    ss << "  }," << endl;
+    ss << "  \"placeOfAction\": {" << endl;
+    ss << "    \"street\": \"" << location.GetStreet() << "\"," << endl;
+    ss << "    \"houseNumber\": \"" << location.GetStreetNumber() << "\"," << endl;
+    ss << "    \"addition\": \"" << operation->GetEinsatzortZusatz() << "\"," << endl;
+    ss << "    \"city\": \"" << location.GetCity() << "\"";
+
+    if(location.HasGeoCoordinates())
+    {
+        ss << "," << endl;
+        ss << "    \"geoPosition\": {" << endl;
+        ss << "      \"x\": \"" << location.GetGeoLatitude() << "\"," << endl;
+        ss << "      \"y\": \"" << location.GetGeoLongitude() << "\"" << endl;
+        ss << "    }" << endl;
+    }
+
+    ss << "  }," << endl;
+    ss << "  \"priority\": " << operation->GetPriority() << "," << endl;
+
+    GetResourceAsJson(operation->GetResources(), ss);
+
     ss << "}";
 
     string s = ss.str();
 
-    BOOST_LOG_TRIVIAL(debug) << "Created JSON message:" << endl << s;
+    BOOST_LOG_TRIVIAL(info) << "JSON content:" << endl << s;
 
     return s;
+
+    /*
+{
+  "time": "2002-01-10T01:02:03Z",
+  "comment": "comment1",
+  "keywords": {
+    "keyword": "Keyword1",
+    "emergencyKeyword": "THL1",
+    "b": "b",
+    "r": "r",
+    "s": "s",
+    "t": "t"
+  },
+  "placeOfAction": {
+    "street": "Meiserstraße",
+    "houseNumber": "2",
+    "addition": "Garage",
+    "city": "Nürnberg",
+    "geoPosition": {
+      "x": "1.2",
+      "y": "2.3"
+    }
+  },
+  "priority": 1,
+  "resources": [
+    {
+      "name": "LF8",
+      "equipments": [
+        {
+          "name": "Wasser 600l"
+        },
+        {
+          "name": "THL"
+        }
+      ]
+    },
+    {
+      "name": "MTW",
+      "equipments": [
+        {
+          "name": "Überdruckbelüftung"
+        }
+      ]
+    }
+  ]
+}
+*/
+}
+
+string AlarmMonitorSender::FormatDateTimeForJson(boost::posix_time::ptime timestamp) const
+{
+    using namespace boost::posix_time;
+
+    static std::locale loc(std::cout.getloc(), new time_facet("%Y-%m-%dT%H:%M:%SZ"));
+
+    ostringstream is;
+    is.imbue(loc);
+    is << timestamp;
+
+    string result = is.str();
+    return result;
+}
+
+void AlarmMonitorSender::GetResourceAsJson(const vector<unique_ptr<OperationResource>>& resources, stringstream& ss)
+{
+    ss << "  \"resources\": [" << endl;
+
+    int resourcesCount = resources.size();
+    int resourcesCurrentIndex = 0;
+    for(auto const& resource : resources)
+    {
+        ss << "    {" << endl;
+        ss << "      \"name\": \"" << resource.get()->GetFullName() << "\"," << endl;
+        ss << "      \"equipments\": ";
+
+        int equipmentCount = resource.get()->GetRequestedEquipment().size();
+        if(equipmentCount == 0)
+        {
+            ss << "[]" << endl;
+        }
+        else
+        {
+            ss << "[" << endl;
+
+            int equipmentCurrentIndex = 0;
+            for(auto const& equipment : resource.get()->GetRequestedEquipment())
+            {
+                ss << "        {" << endl;
+                ss << "          \"name\": \"" << equipment << "\"" << endl;
+                ss << "        }";
+
+                if(equipmentCurrentIndex < equipmentCount - 1)
+                {
+                    ss << ",";
+                }
+
+                ss << endl;
+
+                equipmentCurrentIndex++;
+            }
+
+            ss << "      ]" << endl;
+        }
+
+        ss << "    }";
+
+        if(resourcesCurrentIndex < resourcesCount - 1)
+        {
+            ss << ",";
+        }
+
+        ss << endl;
+        resourcesCurrentIndex++;
+    }
+
+    ss << "  ]" << endl;
 }

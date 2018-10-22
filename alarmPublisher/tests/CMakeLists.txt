@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 # Set options for this project
-set (PROJECT_NAME "alarmPublisher_test" CXX)
+set (PROJECT_NAME "alarmPublisher_tests" CXX)
 project(${PROJECT_NAME})
 
 message(STATUS "============================")
@@ -32,7 +32,6 @@ if (Boost_FOUND)
     include_directories (SYSTEM ${Boost_INCLUDE_DIR})
     
     message(STATUS "The Boost include directory: ${Boost_INCLUDE_DIR}")
-    message(STATUS "The Boost libraries: ${Boost_LIBRARIES})")
     
     # From the offical documentation:
     # "Specify directories in which the linker will look for libraries. [...] Note
@@ -41,8 +40,22 @@ if (Boost_FOUND)
     # library file paths directly to the target_link_libraries() command. CMake
     # will ensure the linker finds them."
     link_directories (${Boost_LIBRARY_DIRS})
+
+    message(STATUS "Boost libs: ${Boost_LIBRARIES}")
 endif ()
 
-add_executable(${PROJECT_NAME}_ConfigReader TestRunner.cpp ConfigReaderTest.cpp) 
-target_link_libraries(${PROJECT_NAME}_ConfigReader PRIVATE alarmPublisher ${Boost_LIBRARIES})
+# set(SOURCE ${SOURCE}   ${CMAKE_CURRENT_SOURCE_DIR}../src/*.cpp    PARENT_SCOPE)
+# set(HEADERS ${HEADERS} ${CMAKE_CURRENT_SOURCE_DIR}../include/*.h PARENT_SCOPE)
+
+#include_directories(${alarmPublisher_tests_SOURCE_DIR} ${alarmPublisher_tests_SOURCE_DIR}/../src ${alarmPublisher_tests_SOURCE_DIR}/../include/)
+
+# find_library(ALARMPUBLISHER_EXE alarmPublisher PATHS ${CMAKE_BINARY_DIR})
+# message(STATUS "========ALARMPUBLISHER_EXE: ${ALARMPUBLISHER_EXE}")
+
+add_executable(${PROJECT_NAME}_ConfigReader TestRunner.cpp ConfigReaderTest.cpp ../src/ConfigReader.cpp) 
+target_link_libraries(${PROJECT_NAME}_ConfigReader ${Boost_LIBRARIES})
 add_test(NAME ConfigReader COMMAND ${PROJECT_NAME}_ConfigReader)
+
+# add_executable(${PROJECT_NAME}_AlarmMonitorSender TestRunner.cpp AlarmMonitorSenderTest.cpp ../src/AlarmMonitorSender.cpp)
+# target_link_libraries(${PROJECT_NAME}_AlarmMonitorSender PRIVATE faxparser ${Boost_LIBRARIES} ${RESTCLIENTCPP})
+# add_test(NAME AlarmMonitorSender COMMAND ${PROJECT_NAME}_AlarmMonitorSender)

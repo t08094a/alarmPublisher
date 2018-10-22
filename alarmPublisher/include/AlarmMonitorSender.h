@@ -21,8 +21,10 @@
 #ifndef ALARMMONITORSENDER_H
 #define ALARMMONITORSENDER_H
 
-#include <boost/log/trivial.hpp>
+#include "Operation.h"
 #include "../../faxParser/include/IOperation.h"
+#include <boost/log/trivial.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using namespace std;
 
@@ -35,13 +37,16 @@ private:
     bool initialized;
     
     void Initialize();
-    string GetDataAsJson() const;
+    
+    string FormatDateTimeForJson(boost::posix_time::ptime timestamp) const;
+    void GetResourceAsJson(const vector<unique_ptr<OperationResource>>& resources, stringstream& ss);
     
 public:
     AlarmMonitorSender();
     ~AlarmMonitorSender();
     
-    void Send(IOperation& operation) const;
+    string GetDataAsJson(IOperation* operation);
+    void Send(IOperation* operation);
 };
 
 #endif // ALARMMONITORSENDER_H

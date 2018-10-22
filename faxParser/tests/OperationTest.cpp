@@ -541,3 +541,160 @@ BOOST_AUTO_TEST_CASE( VerifyAssignmentOperatorWithSamePointerShouldHandleSelfAss
     
     BOOST_CHECK(addressof<Operation>(operation1) == addressof<Operation>(operation1));
 }
+
+static string GetDataAsJson(IOperation* operation);
+
+BOOST_AUTO_TEST_CASE( SendIsCalledCorrectly )
+{
+    Operation op;
+    op.SetComment("comment1");
+    op.SetPriority("1");
+    op.SetTimestamp(boost::posix_time::ptime(boost::gregorian::date(2002, boost::gregorian::Jan, 10), boost::posix_time::time_duration(1,2,3)));
+    op.SetEinsatzortZusatz("Garage");
+    
+    PropertyLocation& einsatzort = op.GetEinsatzortInternal();
+    einsatzort.SetStreet("Meiserstraße");
+    einsatzort.SetStreetNumber("2");
+    einsatzort.SetZipCode("90144");
+    einsatzort.SetCity("Nürnberg");
+    einsatzort.SetGeoLatitude(1.2);
+    einsatzort.SetGeoLongitude(2.3);
+    
+    OperationKeywords& keywords = op.GetKeywordsInternal();
+    keywords.SetKeyword("Keyword1");
+    keywords.SetEmergencyKeyword("THL1");
+    keywords.SetB("b");
+    keywords.SetR("r");
+    keywords.SetS("s");
+    keywords.SetT("t");
+    
+    // note: do not delete pointer! It is deleted internally
+    OperationResource* res1 = new OperationResource();
+    res1->SetFullName("LF8");
+    res1->AddRequestedEquipment("Wasser 600l");
+    res1->AddRequestedEquipment("THL");
+    
+    // note: do not delete pointer! It is deleted internally
+    OperationResource* res2 = new OperationResource();
+    res2->SetFullName("MTW");
+    res2->AddRequestedEquipment("Überdruckbelüftung");
+    
+    op.AddResource(res1);
+    op.AddResource(res2);
+    
+    string result = GetDataAsJson(&op);
+    cerr << result << endl;
+}
+
+static string FormatDateTimeForJson(boost::posix_time::ptime timestamp)
+{
+    using namespace boost::posix_time;
+    
+    static std::locale loc(std::cout.getloc(), new time_facet("%Y-%m-%dT%H:%M:%SZ"));
+    
+    ostringstream is;
+    is.imbue(loc);
+    is << timestamp;
+    
+    string result = is.str();
+    return result;
+}
+
+static void GetResourceAsJson(const vector<unique_ptr<OperationResource>>& resources, stringstream& ss)
+{
+    ss << "  \"resources\": [" << endl;
+
+    int resourcesCount = resources.size();
+    int resourcesCurrentIndex = 0;
+    for(auto const& resource : resources)
+    {
+        ss << "    {" << endl;
+        ss << "      \"name\": \"" << resource.get()->GetFullName() << "\"," << endl;
+        ss << "      \"equipments\": ";
+
+        int equipmentCount = resource.get()->GetRequestedEquipment().size();
+        if(equipmentCount == 0)
+        {
+            ss << "[]" << endl;
+        }
+        else
+        {
+            ss << "[" << endl;
+
+            int equipmentCurrentIndex = 0;
+            for(auto const& equipment : resource.get()->GetRequestedEquipment())
+            {
+                ss << "        {" << endl;
+                ss << "          \"name\": \"" << equipment << "\"" << endl;
+                ss << "        }";
+
+                if(equipmentCurrentIndex < equipmentCount - 1)
+                {
+                    ss << ",";
+                }
+
+                ss << endl;
+
+                equipmentCurrentIndex++;
+            }
+
+            ss << "      ]" << endl;
+        }
+
+        ss << "    }";
+
+        if(resourcesCurrentIndex < resourcesCount - 1)
+        {
+            ss << ",";
+        }
+
+        ss << endl;
+        resourcesCurrentIndex++;
+    }
+
+    ss << "  ]" << endl;
+}
+
+static string GetDataAsJson(IOperation* operation)
+{
+    ILocation& location = operation->GetEinsatzort();
+    IKeywords& keywords =  operation->GetKeywords();
+
+    stringstream ss;
+    ss << "{" << endl;
+    ss << "  \"time\": \"" << FormatDateTimeForJson(operation->GetTimestamp()) << "\"," << endl;
+    ss << "  \"comment\": \"" << operation->GetComment() << "\"," << endl;
+    ss << "  \"keywords\": {" << endl;
+    ss << "    \"keyword\": \"" << keywords.GetKeyword() << "\"," << endl;
+    ss << "    \"emergencyKeyword\": \"" << keywords.GetEmergencyKeyword() << "\"," << endl;
+    ss << "    \"b\": \"" << keywords.GetB() << "\"," << endl;
+    ss << "    \"r\": \"" << keywords.GetR() << "\"," << endl;
+    ss << "    \"s\": \"" << keywords.GetS() << "\"," << endl;
+    ss << "    \"t\": \"" << keywords.GetT() << "\"" << endl;
+    ss << "  }," << endl;
+    ss << "  \"placeOfAction\": {" << endl;
+    ss << "    \"street\": \"" << location.GetStreet() << "\"," << endl;
+    ss << "    \"houseNumber\": \"" << location.GetStreetNumber() << "\"," << endl;
+    ss << "    \"addition\": \"" << operation->GetEinsatzortZusatz() << "\"," << endl;
+    ss << "    \"city\": \"" << location.GetCity() << "\"," << endl;
+    
+    if(location.HasGeoCoordinates())
+    {
+        ss << "    \"geoPosition\": {" << endl;
+        ss << "      \"x\": \"" << location.GetGeoLatitude() << "\"," << endl;
+        ss << "      \"y\": \"" << location.GetGeoLongitude() << "\"" << endl;
+        ss << "    }" << endl;
+    }
+
+    ss << "  }," << endl;
+    ss << "  \"priority\": " << operation->GetPriority() << "," << endl;
+
+    GetResourceAsJson(operation->GetResources(), ss);
+
+    ss << "}";
+
+    string s = ss.str();
+
+    return s;
+}
+

@@ -150,6 +150,10 @@ public:
     string GetEinsatzortStation();
 
     void SetEinsatzortStation(const string station);
+    
+    double GetEinsatzortLatitude();
+    
+    double GetEinsatzortLongitude();
 
     string GetZielortZusatz();
 

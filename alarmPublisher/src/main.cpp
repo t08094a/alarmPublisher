@@ -35,6 +35,7 @@
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "AlarmMonitorSender.h"
 #include "../../faxParser/include/IlsAnsbach.h"
 #include "../../faxParser/include/ILocation.h"
 #include "../../smsGateway/include/GatewayManager.h"
@@ -68,12 +69,15 @@ int main(int argc, char **argv)
     
         string msg = PrepareMessage(operation);
             
-        delete operation;
-        
         BOOST_LOG_TRIVIAL(info) << "Send message ...";
         
         GatewayManager smsManager;
         smsManager.SendMessage(msg);
+
+        AlarmMonitorSender alarmMonitorSender;
+        alarmMonitorSender.Send(operation);
+
+        delete operation;
     }
     catch(exception &e)
     {

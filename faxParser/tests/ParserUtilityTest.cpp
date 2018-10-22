@@ -385,8 +385,8 @@ BOOST_AUTO_TEST_CASE( CoordinatesWithIntegersAreParsedCorrectly )
 
     GaussKruegerCoordinate coordinate = ParserUtility::ReadCoordinate(value);
 
-    BOOST_CHECK("4389245" == coordinate.GetX());
-    BOOST_CHECK("5487632" == coordinate.GetY());
+    BOOST_CHECK(4389245 == coordinate.GetX());
+    BOOST_CHECK(5487632 == coordinate.GetY());
     
     BOOST_CHECK(false == coordinate.IsEmpty());
 }
@@ -397,8 +397,8 @@ BOOST_AUTO_TEST_CASE( CoordinatesWithFloatsAreParsedCorrectly )
 
     GaussKruegerCoordinate coordinate = ParserUtility::ReadCoordinate(value);
 
-    BOOST_CHECK("4389245.59" == coordinate.GetX());
-    BOOST_CHECK("5487632.3974" == coordinate.GetY());
+    BOOST_CHECK(4389245.59 == coordinate.GetX());
+    BOOST_CHECK(5487632.3974 == coordinate.GetY());
     
     BOOST_CHECK(false == coordinate.IsEmpty());
 }
@@ -409,8 +409,8 @@ BOOST_AUTO_TEST_CASE( CoordinatesWithEmptyValuesAreParsedToZero )
 
     GaussKruegerCoordinate coordinate = ParserUtility::ReadCoordinate(value);
 
-    BOOST_CHECK("0" == coordinate.GetX());
-    BOOST_CHECK("0" == coordinate.GetY());
+    BOOST_CHECK(0 == coordinate.GetX());
+    BOOST_CHECK(0 == coordinate.GetY());
     
     BOOST_CHECK(true == coordinate.IsEmpty());
 }

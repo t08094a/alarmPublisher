@@ -17,9 +17,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "../include/GaussKruegerCoordinate.h"
+#include "GaussKruegerCoordinate.h"
 #include <string>
-#include <exception>
 #include <typeinfo>
 #include <boost/log/trivial.hpp>
 #include <boost/lexical_cast.hpp>
@@ -27,17 +26,23 @@
 
 using namespace std;
 
-GaussKruegerCoordinate::GaussKruegerCoordinate(const string& _x, const string& _y) : x("0"), y("0")
+GaussKruegerCoordinate::GaussKruegerCoordinate(const string& _x, const string& _y) : x(-1), y(-1)
 {
     if(! _x.empty() && IsValid<double>(_x))
     {
-        this->x = _x;
+        this->x = stod(_x);
     }
 
     if(! _y.empty() && IsValid<double>(_y))
     {
-        this->y = _y;
+        this->y = stod(_y);
     }
+}
+
+GaussKruegerCoordinate::GaussKruegerCoordinate(const double _x, const double _y)
+{
+    this->x = _x;
+    this->y = _y;
 }
 
 GaussKruegerCoordinate::GaussKruegerCoordinate(const GaussKruegerCoordinate& other)
@@ -64,22 +69,23 @@ GaussKruegerCoordinate& GaussKruegerCoordinate::operator=(const GaussKruegerCoor
 
 bool GaussKruegerCoordinate::operator==(const GaussKruegerCoordinate& other) const
 {
-    return this->x == other.x && this->y == other.y;
+    return std::fabs(this->x - other.x) < 0.1 && std::fabs(this->y - other.y) < 0.1;
 }
 
-string GaussKruegerCoordinate::GetX()
+double GaussKruegerCoordinate::GetX()
 {
     return this->x;
 }
 
-string GaussKruegerCoordinate::GetY()
+double GaussKruegerCoordinate::GetY()
 {
     return this->y;
 }
 
+
 bool GaussKruegerCoordinate::IsEmpty()
 {
-    return this->x == "0" || this->y == "0";
+    return this->x <= 0 || this->y <= 0;
 }
 
 template<typename T> 

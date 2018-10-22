@@ -18,6 +18,7 @@ SET(LIB_MINOR 0)
 SET(LIB_RELEASE 1)
 SET(_soversion ${LIB_MAJOR}.${LIB_MINOR}.${LIB_RELEASE})
 
+
 set(PROJECT_SOURCE_DECLARATION_DIRECTORY ${PROJECT_SOURCE_DIR}/include)
 set(PROJECT_SOURCE_DEFINITION_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
 
@@ -66,7 +67,6 @@ if (Boost_FOUND)
     # will ensure the linker finds them."
     link_directories (${Boost_LIBRARY_DIRS})
 endif ()
-
 
 # install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 # install(FILES ${HEADER_FILES} DESTINATION include)

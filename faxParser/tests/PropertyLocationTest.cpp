@@ -76,20 +76,11 @@ BOOST_AUTO_TEST_CASE(SettedNothingResultsInHasGeoCoordinatesFalse)
     delete location;
 }
 
-BOOST_AUTO_TEST_CASE(SettedLatitudeResultsInHasGeoCoordinatesTrue)
+BOOST_AUTO_TEST_CASE(SettedLatitudeAndLongitudeResultsInHasGeoCoordinatesTrue)
 {
     PropertyLocation* location = new PropertyLocation();
-    location->SetGeoLatitude("1,0");
-
-    BOOST_CHECK(true == location->HasGeoCoordinates());
-
-    delete location;
-}
-
-BOOST_AUTO_TEST_CASE(SettedLongitudeResultsInHasGeoCoordinatesTrue)
-{
-    PropertyLocation* location = new PropertyLocation();
-    location->SetGeoLongitude("1,0");
+    location->SetGeoLatitude(49.526567);
+    location->SetGeoLongitude(10.483909);
 
     BOOST_CHECK(true == location->HasGeoCoordinates());
 
@@ -162,8 +153,8 @@ BOOST_AUTO_TEST_CASE(CopyConstructerCreatesIdenticalObjectWithPointer)
 {
     PropertyLocation* location = new PropertyLocation();
     location->SetCity("Ipsheim");
-    location->SetGeoLatitude("1,0");
-    location->SetGeoLongitude("2,0");
+    location->SetGeoLatitude(1.0);
+    location->SetGeoLongitude(2.0);
     location->SetIntersection("intersection");
     location->SetLocation("Ipsheim");
     location->SetProperty("Wohnhaus");
@@ -191,8 +182,8 @@ BOOST_AUTO_TEST_CASE(AssignmentOperatorCreatesIdenticalObject)
 {
     PropertyLocation location;
     location.SetCity("Ipsheim");
-    location.SetGeoLatitude("1,0");
-    location.SetGeoLongitude("2,0");
+    location.SetGeoLatitude(1.0);
+    location.SetGeoLongitude(2.0);
     location.SetIntersection("intersection");
     location.SetLocation("Ipsheim");
     location.SetProperty("Wohnhaus");
@@ -219,8 +210,8 @@ BOOST_AUTO_TEST_CASE(CompareEqualToTrue)
 {
     PropertyLocation* location1 = new PropertyLocation();
     location1->SetCity("Ipsheim");
-    location1->SetGeoLatitude("1,0");
-    location1->SetGeoLongitude("2,0");
+    location1->SetGeoLatitude(1.0);
+    location1->SetGeoLongitude(2.0);
     location1->SetIntersection("intersection");
     location1->SetLocation("Ipsheim");
     location1->SetProperty("Wohnhaus");
@@ -230,8 +221,8 @@ BOOST_AUTO_TEST_CASE(CompareEqualToTrue)
     
     PropertyLocation* location2 = new PropertyLocation();
     location2->SetCity("Ipsheim");
-    location2->SetGeoLatitude("1,0");
-    location2->SetGeoLongitude("2,0");
+    location2->SetGeoLatitude(1.0);
+    location2->SetGeoLongitude(2.0);
     location2->SetIntersection("intersection");
     location2->SetLocation("Ipsheim");
     location2->SetProperty("Wohnhaus");
@@ -249,8 +240,8 @@ BOOST_AUTO_TEST_CASE(CompareEqualToFalse)
 {
     PropertyLocation* location1 = new PropertyLocation();
     location1->SetCity("Ipsheim");
-    location1->SetGeoLatitude("1,0");
-    location1->SetGeoLongitude("2,0");
+    location1->SetGeoLatitude(1.0);
+    location1->SetGeoLongitude(2.0);
     location1->SetIntersection("intersection");
     location1->SetLocation("Ipsheim");
     location1->SetProperty("Wohnhaus");
@@ -260,8 +251,8 @@ BOOST_AUTO_TEST_CASE(CompareEqualToFalse)
     
     PropertyLocation* location2 = new PropertyLocation();
     location2->SetCity("Ipsheim");
-    location2->SetGeoLatitude("1,0");
-    location2->SetGeoLongitude("2,0");
+    location2->SetGeoLatitude(1.0);
+    location2->SetGeoLongitude(2.0);
     location2->SetIntersection("intersection");
     location2->SetLocation("Oberndorf");
     location2->SetProperty("Wohnhaus");

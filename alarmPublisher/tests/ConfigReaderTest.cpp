@@ -19,9 +19,8 @@ BOOST_AUTO_TEST_CASE( GetActiveGateway )
 
 BOOST_AUTO_TEST_CASE( GetTelephonNumber )
 {
-    string expected = "1111;2222";
-    
-    string numbers = ConfigReader::GetInstance().GetTelephoneNumbers();
+    vector<string> numbers = ConfigReader::GetInstance().GetTelephoneNumbers();
         
-    BOOST_CHECK(expected == numbers);
+    BOOST_CHECK("1111" == numbers.at(0));
+    BOOST_CHECK("2222" == numbers.at(1));
 }
