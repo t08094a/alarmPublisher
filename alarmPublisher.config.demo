@@ -17,4 +17,4 @@ Priority = 2
 
 [AlarmMonitor]
 endpoint = http://alarmmonitor-display.local
-api = /api/v1/alarminfo
+api = /alarm-info
