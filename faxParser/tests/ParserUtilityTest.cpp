@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE( AnalyzeStreetLineWithoutHausNrResultsInCorrectStreet )
     ParserUtility::AnalyzeStreetLine(message, street, streetNumber, appendix);
 
     BOOST_CHECK("Oberndorfer Straße" == street);
-    BOOST_CHECK("1" == streetNumber);
+    BOOST_CHECK("" == streetNumber);
     BOOST_CHECK("" == appendix);
 }
 

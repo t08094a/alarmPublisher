@@ -360,6 +360,7 @@ string Operation::ToString() const
     ss << "\t" << "einsatzortZusatz: " << einsatzortZusatz << endl;
     ss << "\t" << "einsatzortPlannummer: " << einsatzortPlannummer << endl;
     ss << "\t" << "einsatzortStation: " << einsatzortStation << endl;
+    ss << "\t" << "einsatzortKoordinate: " << "X: " << boost::lexical_cast<std::string>(einsatzort.GetGeoLatitude()) << " Y: " << boost::lexical_cast<std::string>(einsatzort.GetGeoLongitude()) << endl;
     ss << "\t" << "operationNumber: " << operationNumber << endl;
     ss << "\t" << "messenger: " << messenger << endl;
     ss << "\t" << "priority: " << priority << endl;

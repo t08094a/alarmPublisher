@@ -333,6 +333,8 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
     
     for(string& line : lines)
     {
+        BOOST_LOG_TRIVIAL(info) << "work on line: " << line;
+        
         bool isSection = IsSectionBegin(line);
         
         // if the next section starts end here
@@ -398,9 +400,6 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
         else if (prefix == "STATION")
         {
             operation->SetEinsatzortStation(value);
-			
-			string headerLine = CreateSectionHeaderLine("ZIELORT");
-			InsertSectionHeaderLine(lines, headerLine, DZielort, itemsToDelete);
         }
         else if (prefix == "KOORDINATE")
         {
@@ -410,7 +409,11 @@ void IlsAnsbach::ReadEinsatzort(vector<string>& lines, Operation* operation)
             {
                 einsatzort.SetGeoLatitude(coordinate.GetX());
                 einsatzort.SetGeoLongitude(coordinate.GetY());
-            }
+            }  
+			
+			// its the last entry in this section -> jump to the next one
+			string headerLine = CreateSectionHeaderLine("ZIELORT");
+			InsertSectionHeaderLine(lines, headerLine, DZielort, itemsToDelete);
         }
     }
     

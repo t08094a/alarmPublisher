@@ -109,8 +109,8 @@ string AlarmMonitorSender::GetDataAsJson(IOperation* operation)
     {
         ss << "," << endl;
         ss << "    \"geoPosition\": {" << endl;
-        ss << "      \"x\": \"" << location.GetGeoLatitude() << "\"," << endl;
-        ss << "      \"y\": \"" << location.GetGeoLongitude() << "\"" << endl;
+        ss << "      \"x\": \"" << boost::lexical_cast<std::string>(location.GetGeoLatitude()) << "\"," << endl;
+        ss << "      \"y\": \"" << boost::lexical_cast<std::string>(location.GetGeoLongitude()) << "\"" << endl;
         ss << "    }" << endl;
     }
 

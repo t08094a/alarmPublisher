@@ -68,15 +68,15 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     BOOST_CHECK("" == result->GetComment());
     
     BOOST_CHECK("Ipsheim" == einsatzort.GetCity());
-    BOOST_CHECK(49.5281164861747 == einsatzort.GetGeoLatitude()); // 4392249 converted to WGS84 => 49.5281164861747
-    BOOST_CHECK(10.510129026738161 == einsatzort.GetGeoLongitude()); // 5488985 converted to WGS84 => 10.510129026738161
+    BOOST_CHECK(4392249 == einsatzort.GetGeoLatitude()); // 4392249 converted to WGS84 => 49.5281164861747
+    BOOST_CHECK(5488985 == einsatzort.GetGeoLongitude()); // 5488985 converted to WGS84 => 10.510129026738161
     BOOST_CHECK("" == einsatzort.GetIntersection());
     BOOST_CHECK("" == einsatzort.GetLocation());
     BOOST_CHECK("5.1.3 NEA Feuerwehrgerätehaus Ipsheim" == einsatzort.GetProperty());
     BOOST_CHECK("Marktplatz" == einsatzort.GetStreet());
     BOOST_CHECK("0" == einsatzort.GetStreetNumber());
     BOOST_CHECK("91472" == einsatzort.GetZipCode());
-    BOOST_CHECK(false == einsatzort.HasGeoCoordinates());
+    BOOST_CHECK(true == einsatzort.HasGeoCoordinates());
     BOOST_CHECK(true == einsatzort.IsMeaningful());
     
     BOOST_CHECK("" == result->GetEinsatzortPlannummer());
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithExistingFile )
     BOOST_CHECK("" == zielort.GetLocation());
     BOOST_CHECK("" == zielort.GetProperty());
     BOOST_CHECK("" == zielort.GetStreet());
-    BOOST_CHECK("1" == zielort.GetStreetNumber()); // ??? sollte eigentlich leer sein
+    BOOST_CHECK("" == zielort.GetStreetNumber());
     BOOST_CHECK("" == zielort.GetZipCode());
     BOOST_CHECK(false == zielort.HasGeoCoordinates());
     BOOST_CHECK(false == zielort.IsMeaningful());
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithMultipleEinsatzmittel )
     BOOST_CHECK("" == einsatzort.GetLocation());
     BOOST_CHECK("" == einsatzort.GetProperty());
     BOOST_CHECK("Mailheim" == einsatzort.GetStreet());
-    BOOST_CHECK("1" == einsatzort.GetStreetNumber());
+    BOOST_CHECK("" == einsatzort.GetStreetNumber());
     BOOST_CHECK("91472" == einsatzort.GetZipCode());
     BOOST_CHECK(false == einsatzort.HasGeoCoordinates());
     BOOST_CHECK(true == einsatzort.IsMeaningful());
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithMultipleEinsatzmittel )
     BOOST_CHECK("" == zielort.GetLocation());
     BOOST_CHECK("" == zielort.GetProperty());
     BOOST_CHECK("" == zielort.GetStreet());
-    BOOST_CHECK("1" == zielort.GetStreetNumber()); // ??? sollte eigentlich leer sein
+    BOOST_CHECK("" == zielort.GetStreetNumber());
     BOOST_CHECK("" == zielort.GetZipCode());
     BOOST_CHECK(false == zielort.HasGeoCoordinates());
     BOOST_CHECK(false == zielort.IsMeaningful());
@@ -234,15 +234,15 @@ BOOST_AUTO_TEST_CASE( ParseFileWithMissingSectionHeaders )
     BOOST_CHECK("" == result->GetComment());
     
     BOOST_CHECK("Ipsheim" == einsatzort.GetCity());
-    BOOST_CHECK(-1 == einsatzort.GetGeoLatitude());
-    BOOST_CHECK(-1 == einsatzort.GetGeoLongitude());
+    BOOST_CHECK(4390498 == einsatzort.GetGeoLatitude());
+    BOOST_CHECK(5493560 == einsatzort.GetGeoLongitude());
     BOOST_CHECK("" == einsatzort.GetIntersection());
     BOOST_CHECK("" == einsatzort.GetLocation());
     BOOST_CHECK("" == einsatzort.GetProperty());
     BOOST_CHECK("Hauptstraße" == einsatzort.GetStreet());
-    BOOST_CHECK("1" == einsatzort.GetStreetNumber());
+    BOOST_CHECK("" == einsatzort.GetStreetNumber());
     BOOST_CHECK("91472" == einsatzort.GetZipCode());
-    BOOST_CHECK(false == einsatzort.HasGeoCoordinates());
+    BOOST_CHECK(true == einsatzort.HasGeoCoordinates());
     BOOST_CHECK(true == einsatzort.IsMeaningful());
     
     BOOST_CHECK("" == result->GetEinsatzortPlannummer());
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE( ParseFileWithMissingSectionHeaders )
     BOOST_CHECK("" == zielort.GetLocation());
     BOOST_CHECK("" == zielort.GetProperty());
     BOOST_CHECK("" == zielort.GetStreet());
-    BOOST_CHECK("1" == zielort.GetStreetNumber()); // ??? sollte eigentlich leer sein
+    BOOST_CHECK("" == zielort.GetStreetNumber());
     BOOST_CHECK("" == zielort.GetZipCode());
     BOOST_CHECK(false == zielort.HasGeoCoordinates());
     BOOST_CHECK(false == zielort.IsMeaningful());
@@ -458,6 +458,8 @@ static const string GetFaxContent3()
 "Plannummer:\n"
 "\n"
 "Station\n"
+"\n"
+"Koordinate: X: 4390498 y: 5493560\n"
 "\n"
 "Straße : Haus-Nr.:\n"
 "Ort :\n"
